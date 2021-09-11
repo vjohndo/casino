@@ -6,6 +6,7 @@ CREATE TABLE users (
     password_hash TEXT,
     wallet INTEGER,
     is_admin BOOLEAN
+    last_login DATE
 )
 
 -- Played_games
@@ -20,18 +21,19 @@ CREATE TABLE played_games (
 -- Vault
 CREATE TABLE vault (
     id SERIAL PRIMARY KEY,
-    vault INTEGER
+    cash INTEGER
 )
 
 -- Transaction
 CREATE TABLE vault (
     id SERIAL PRIMARY KEY,
+    game_id INTEGER
     user_id INTEGER,
     vault_id INTEGER,
     credit INTEGER
 )
 
--- Game_types
+-- Game_types... chucking 
 CREATE TABLE game_types (
     id SERIAL PRIMARY KEY,
     name = TEXT

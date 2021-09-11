@@ -1,4 +1,7 @@
 {% extends "base.jinja" %}
 {% block content %}
-<h1> Hello World, this is a casino <h2>
+<h1> This is John's Casino <h2>
+{% for card_str in hand %}
+<p> {{card_str}} </p>
+{% endfor %}
 {% endblock content %}
