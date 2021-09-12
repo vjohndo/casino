@@ -1,37 +1,60 @@
+from model.played_games import add_game
 from flask import Flask, render_template, request, redirect, session
 import bcrypt
+import pickle
 
 from model.five_card_draw import Five_Card_Draw
 from model.player import Player
 from model.user import *
+from model.played_games import add_game, load_game, update_game
 
 app = Flask(__name__)
 
+
+# Want to serve a unique instance of a teh game to the use and keep track of it
 # Will eventually need to pickle the game to throw it in the DB 
 # https://stackoverflow.com/questions/57642165/saving-python-object-in-postgres-table-with-pickle
-test_player = Player(1, 'John', 'john.do@email.com', 5000)
-game = Five_Card_Draw(test_player,100)
+# test_player = Player(1, 'John', 'john.do@email.com', 5000)
+# game = Five_Card_Draw(test_player,100)
+# pickle_string = pickle.dumps(game)
 
-# Want to create session
+
+
+
 app.config['SECRET_KEY'] = 'ThisKeyTesting'
 
 
 @app.route('/')
 def index():
     
-    hand = game.get_hand()
+    
 
     if session.get('user_id') is None: 
         return render_template('index.jinja', hand = enumerate(hand))
     else:
         name = name_of_id(session.get('user_id'))
+        # Create an instance of the player object & Game
+        loaded_game = load_game(1)
+        game = loaded_game
+        
+        # test_player = Player(session.get('user_id'), 'John', 'john.do@email.com', 5000)
+        # game = Five_Card_Draw(test_player,100)
+        hand = game.get_hand()
+        update_game(game,1)
+
+        # Check if there an existing game in the database that is incomplete
+
         return render_template('index.jinja', hand = enumerate(hand), name=name)
 
 @app.route('/action', methods = ['POST'])
 def action():
+
+    loaded_game = load_game(1)
+    game = loaded_game
     form_request = list(request.form)
     game.redraw(form_request)
     print("FORM REQUEST",form_request)
+    update_game(game,1)
     return redirect('/')
 
 # LOGIN #
@@ -133,14 +156,22 @@ def logout():
 
 @app.route('/sort', methods = ['POST'])
 def sort():
+    
+    loaded_game = load_game(1)
+    game = loaded_game
     game.hand_sort()
+    update_game(game,1)
+
     return redirect('/')
 
 @app.route('/checkwin', methods = ['POST'])
 def checkwin():
+    loaded_game = load_game(1)
+    game = loaded_game
     game.bet = int(request.form.get('bet'))
     hand = game.get_hand()
     result_tuple = game.payout()
+    update_game(game,1)
     return render_template('index.jinja', hand = enumerate(hand), game_case = result_tuple[0], payout = result_tuple[1])
 
 if __name__ == '__main__':
