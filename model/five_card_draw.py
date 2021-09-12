@@ -19,14 +19,12 @@ class Five_Card_Draw():
             'straight': 4,
             'three_of_a_kind': 3,
             'two_pair': 2,
-            'jacks_or_better' : 1
+            'jacks_or_better' : 1,
+            'no_win': 0
         }
 
         for i in range(5):
             self.player.hand.append(self.deck.deal())
-
-        # Sort hand
-        self.player.hand.sort()
 
         print("PLAYER'S HAND:", self.player.hand)
     
@@ -43,20 +41,17 @@ class Five_Card_Draw():
     
     bet = property(get_bet, set_bet)
 
+    def hand_sort(self):
+        self.player.hand.sort()
 
-    def redraw(self):
+    def redraw(self, index_list):
         # Input for testing
-        indexes_to_redraw = input('redraw: ')
-        indexes_to_redraw = [int(char) for char in indexes_to_redraw]
+        indexes_to_redraw = [int(char) for char in index_list]
         print(indexes_to_redraw)
         
         for index in indexes_to_redraw:
             self.player.hand[index] = self.deck.deal()
         print(self.player.hand)
-
-        # Sort hand
-        self.player.hand.sort()
-        
 
     def any_wins(self):
         """ Checks through all possible win combinations and returns a dictionary """
@@ -69,7 +64,8 @@ class Five_Card_Draw():
             'straight': False,
             'three_of_a_kind': False,
             'two_pair': False,
-            'jacks_or_better' : False
+            'jacks_or_better' : False,
+            'no_win' : False
         }
 
         # Check the players hand using the all function
@@ -82,6 +78,7 @@ class Five_Card_Draw():
 
         # Create a list with poker_values
         hand_as_values = [card.poker_value for card in self.player.hand]
+        hand_as_values.sort()
 
         # Royal Flush
         if hand_as_values == [10, 11, 12, 13, 14] and is_flush:
@@ -115,14 +112,24 @@ class Five_Card_Draw():
         elif list(card_value_counts.values()).count(2) == 2:
             winning_combos['two_pair'] = True
 
-        # Doubles > Jack
-        for items in list(card_value_counts.items()):
-            if items[1] >= 2 and items[0] >= 11:
-                winning_combos['jacks_or_better'] = True
+        # Doubles > Jack or no win
+        else:
+            for items in list(card_value_counts.items()):
+                if items[1] >= 2 and items[0] >= 11:
+                    winning_combos['jacks_or_better'] = True
+                else:
+                    winning_combos['no_win'] = True
 
         return winning_combos
+
+    def payout(self):
+        win_table = self.any_wins()
+        winning_string = [string for string, state in win_table.items() if win_table[string]]
+        return (winning_string[0],self.prize_dict[winning_string[0]]*self.bet_amount)
+
 
 
 game = Five_Card_Draw(test_player,100)
 game.any_wins()
+print(game.payout()[0])
 # game.redraw()

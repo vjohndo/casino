@@ -15,6 +15,8 @@ CREATE TABLE played_games (
     user_id INTEGER,
     game_id INTEGER,
     bet_amount INTEGER
+    pickled_game BYTEA
+    game_over BOOLEAN
     result INTEGER
 )
 
