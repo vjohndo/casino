@@ -1,6 +1,9 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
+import bcrypt
+
 from model.five_card_draw import Five_Card_Draw
 from model.player import Player
+from model.user import *
 
 app = Flask(__name__)
 
@@ -9,12 +12,20 @@ app = Flask(__name__)
 test_player = Player(1, 'John', 'john.do@email.com', 5000)
 game = Five_Card_Draw(test_player,100)
 
-# Want to be able to interact with the game now
+# Want to create session
+app.config['SECRET_KEY'] = 'ThisKeyTesting'
+
+
 @app.route('/')
 def index():
     
     hand = game.get_hand()
-    return render_template('index.jinja', hand = enumerate(hand))
+
+    if session.get('user_id') is None: 
+        return render_template('index.jinja', hand = enumerate(hand))
+    else:
+        name = name_of_id(session.get('user_id'))
+        return render_template('index.jinja', hand = enumerate(hand), name=name)
 
 @app.route('/action', methods = ['POST'])
 def action():
@@ -22,6 +33,103 @@ def action():
     game.redraw(form_request)
     print("FORM REQUEST",form_request)
     return redirect('/')
+
+# LOGIN #
+@app.route("/login")
+def login():
+    if session.get('user_id'):
+        return redirect('/')
+
+    fields_empty = False
+    wrong_details = False
+
+    if session.get('fields_empty'):
+        fields_empty = True
+
+    if session.get('wrong_details'): 
+        wrong_details = True
+
+    return render_template("login.jinja", fields_empty=fields_empty, wrong_details = wrong_details)
+
+@app.route("/login_action", methods=["POST"])
+def login_action():
+    if session.get('user_id'):
+        return redirect('/')
+
+    login_email = request.form.get("username")
+    login_password = request.form.get("password")
+    session['fields_empty'] = False
+    session['wrong_details'] = False
+
+    if 0 in [len(x) for x in [login_email, login_password]]:
+        session['fields_empty'] = True
+        return redirect('/login') 
+
+    if user_exists_of_email(login_email):
+        user_profile = user_profile_of_email(login_email)
+        password_hash = user_profile['password_hash']
+        password_is_valid = bcrypt.checkpw(login_password.encode(), password_hash.encode())
+        
+        if password_is_valid:
+            session['user_id'] = user_profile['id']
+            return redirect("/")
+        
+    session['wrong_details'] = True
+    return redirect("/login")
+        
+# SIGN UP
+@app.route('/signup')
+def sign_up():
+    email_already_exists = False
+    passwords_not_match = False
+    fields_empty = False
+    
+    if session.get('user_id'):
+        return redirect('/')
+
+    if session.get('already_exists'):
+        email_already_exists = True
+    
+    if session.get('passwords_not_match'):
+        passwords_not_match = True
+
+    if session.get('fields_empty'):
+        fields_empty = True
+    
+    return render_template('signup.jinja', already_exists = email_already_exists, passwords_not_match = passwords_not_match, fields_empty = fields_empty)
+
+@app.route('/signup_action', methods=['POST'])
+def signup_action():
+    signup_email = request.form.get('email')
+    signup_name = request.form.get('name')
+    signup_password1 = request.form.get('password1')
+    signup_password2 = request.form.get('password2')
+
+    session['already_exists'] = None
+    session['passwords_not_match'] = None
+
+    if 0 in [len(x) for x in [signup_email, signup_email, signup_password1, signup_password2]]:
+        session['fields_empty'] = True
+        return redirect('/signup') 
+
+    if user_exists_of_email(signup_email):
+        session['already_exists'] = True
+        return redirect('/signup') 
+    
+    if signup_password1 != signup_password2:
+        session['passwords_not_match'] = True
+        return redirect('/signup') 
+
+    password_hash = bcrypt.hashpw(signup_password1.encode(), bcrypt.gensalt()).decode()
+    add_user(signup_email,signup_name,password_hash)
+    session['user_id'] = user_profile_of_email(signup_email)['id']
+    return redirect("/")
+
+# LOGOUT #
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
 
 @app.route('/sort', methods = ['POST'])
 def sort():

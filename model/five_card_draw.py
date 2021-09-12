@@ -25,8 +25,6 @@ class Five_Card_Draw():
 
         for i in range(5):
             self.player.hand.append(self.deck.deal())
-
-        print("PLAYER'S HAND:", self.player.hand)
     
     def get_hand(self):
         return self.player.get_hand()
@@ -45,13 +43,10 @@ class Five_Card_Draw():
         self.player.hand.sort()
 
     def redraw(self, index_list):
-        # Input for testing
         indexes_to_redraw = [int(char) for char in index_list]
-        print(indexes_to_redraw)
         
         for index in indexes_to_redraw:
             self.player.hand[index] = self.deck.deal()
-        print(self.player.hand)
 
     def any_wins(self):
         """ Checks through all possible win combinations and returns a dictionary """

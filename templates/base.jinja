@@ -7,6 +7,13 @@
     <title>Casino</title>
 </head>
 <body>
+    {% if name %}
+        <a href="/logout">LOGOUT</a>
+        <p> Logged in as {{name}} </p>
+    {% else %}
+        <header><a href="/login">LOGIN</a>
+        <p> Not logged in</p>
+    {% endif %}
     {% block content %}
     {% endblock content %}
 </body>
