@@ -8,6 +8,8 @@ class Five_Card_Draw():
 
     def __init__(self, player_id, bet_amount = 10):
         self.game_instance_id = None
+        self.isOver = False
+        self.payout_amount = None
         self.player_id = player_id
         self.bet_amount = bet_amount
         self.deck = Deck()
@@ -122,6 +124,8 @@ class Five_Card_Draw():
     def payout(self):
         win_table = self.any_wins()
         winning_string = [string for string in win_table.keys() if win_table[string]]
+        self.payout_amount = self.prize_dict[winning_string[0]]*self.bet_amount
+        self.isOver = True
         return (winning_string[0],self.prize_dict[winning_string[0]]*self.bet_amount)
 
 

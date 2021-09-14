@@ -15,8 +15,8 @@ def update_gamedb(game_instance):
     pickled_game = pickle.dumps(game_instance)
 
     sql_write(
-        "UPDATE played_games SET pickled_game = %s WHERE id = %s",
-        [pickled_game, game_instance.game_instance_id]
+        "UPDATE played_games SET pickled_game = %s, game_over = %s, result = %s WHERE id = %s",
+        [pickled_game, game_instance.isOver, game_instance.payout_amount ,game_instance.game_instance_id]
     )
 
 def read_gamedb(played_game_id):

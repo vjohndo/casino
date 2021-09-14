@@ -1,20 +1,4 @@
 {% extends "base.jinja" %}
 {% block content %}
 <h1> This is John's Casino <h2>
-    <form action="/action" method='POST' >
-        {% for i, card_str in hand %} 
-            <p> {{card_str}} <input type="checkbox" name={{i}}> </p>
-        {% endfor %}
-        <input type='submit' value='REDRAW'>
-    </form>
-    <form action="/sort" method='POST'>
-        <input type='submit' value='SORT'>
-    </form>
-    <form action="/checkwin" method="POST">
-        <input type='text' name='bet' value='10'>
-        <input type='submit' value='CHECKWIN'>
-    </form>
-    {% if game_case %}
-    <p> You've won on a {{game_case}}, your payout it {{payout}}
-    {% endif %}
 {% endblock content %}
