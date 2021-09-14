@@ -14,6 +14,7 @@ INSERT INTO users (name, email, password_hash, wallet, is_admin) VALUES ('john',
 INSERT INTO users (name, email, password_hash, wallet, is_admin) VALUES ('testperson', 'testperson@email.com', 'password_hash', 1000, FALSE);
 
 -- Played_games.. need a better name than this. 
+-- NEED TO DEFINE CONSTRAINTS
 CREATE TABLE played_games (
     id SERIAL PRIMARY KEY,
     user_id INTEGER,
@@ -25,29 +26,29 @@ CREATE TABLE played_games (
 );
 
 
--- Vault
-CREATE TABLE vault (
-    id SERIAL PRIMARY KEY,
-    cash INTEGER
-)
+-- -- Vault
+-- CREATE TABLE vault (
+--     id SERIAL PRIMARY KEY,
+--     cash INTEGER
+-- )
 
 
 
--- Transaction
-CREATE TABLE vault (
-    id SERIAL PRIMARY KEY,
-    game_id INTEGER
-    user_id INTEGER,
-    vault_id INTEGER,
-    credit INTEGER
-)
+-- -- Transaction
+-- CREATE TABLE vault (
+--     id SERIAL PRIMARY KEY,
+--     game_id INTEGER
+--     user_id INTEGER,
+--     vault_id INTEGER,
+--     credit INTEGER
+-- )
 
 
 
--- Game_types... chucking 
-CREATE TABLE game_types (
-    id SERIAL PRIMARY KEY,
-    name = TEXT
-)
+-- -- Game_types... chucking 
+-- CREATE TABLE game_types (
+--     id SERIAL PRIMARY KEY,
+--     name = TEXT
+-- )
 
 

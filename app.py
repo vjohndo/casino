@@ -1,39 +1,49 @@
-from model.played_games import create_game
+from model.played_games import any_active_gamedb, create_gamedb, get_gameID_by_userID
 from flask import Flask, render_template, request, redirect, session
 import bcrypt
 import pickle
 
+
+from model.encryption import is_password_correct
 from model.five_card_draw import Five_Card_Draw
 from model.player import Player
 from model.user import *
-from model.played_games import create_game, read_game, update_game
+from model.played_games import create_gamedb, read_gamedb, update_gamedb
 
 app = Flask(__name__)
-
-
-# Want to serve a unique instance of a teh game to the use and keep track of it
-# Will eventually need to pickle the game to throw it in the DB 
-# https://stackoverflow.com/questions/57642165/saving-python-object-in-postgres-table-with-pickle
-# test_player = Player(1, 'John', 'john.do@email.com', 5000)
-# game = Five_Card_Draw(test_player,100)
-# pickle_string = pickle.dumps(game)
-
 app.config['SECRET_KEY'] = 'ThisKeyTesting'
 
+@app.route('/create_game')
+def create_game():
 
-# @app.route('/create_game')
-# def create_game():
+    # Get a player class
+    player = user_profile_of_id(session.get('user_id'))
+    
+    # Create an instance of the game 
+    game_init = Five_Card_Draw(player.id)
 
-#     # Get a player class
-#     test_player = Player(1, 'John', 'john.do@email.com', 5000)
+    # Create an entry of the game in the database
+    create_gamedb(game_init)
 
-#     temp_game = Five_Card_Draw()
-#     create_game()
+    return redirect("/")
 
-#     return redirect("/")
-#     """ 
-#     Need to create a route to create the game 
-#     """
+@app.route('/play_game')
+def play_game():
+
+    # Get a player class
+    player = user_profile_of_id(session.get('user_id'))
+
+    # Check if there are any active games
+    if any_active_gamedb(player.id):
+        
+        # Open up that active game
+        game_id = get_gameID_by_userID(player.id)
+        game = read_gamedb(game_id)
+        print(game.hand[0])
+        update_gamedb(game)
+    
+    return render_template("play_game.jinja", name = player.name, enumerated_hand = enumerate(game.hand))
+
 
 @app.route('/')
 def index():
@@ -44,31 +54,41 @@ def index():
     """
 
     if session.get('user_id') is None: 
-        return render_template('index.jinja', hand = enumerate(hand))
+        return render_template('index.jinja')
     else:
-        name = name_of_id(session.get('user_id'))
-        # Create an instance of the player object & Game
-        loaded_game = read_game(1)
-        game = loaded_game
+
+        # Create an instance of the player
+        user_profile = user_profile_of_id(session.get('user_id'))
+
+        # if any_active_game(user_profile.id):
+
+
+        # Check if any instance of a game exists 
+
+
+
+        # # Create an instance of the player object & Game
+        # loaded_game = read_game(1)
+        # game = loaded_game
         
-        # test_player = Player(session.get('user_id'), 'John', 'john.do@email.com', 5000)
-        # game = Five_Card_Draw(test_player,100)
-        hand = game.get_hand()
-        update_game(game,1)
+        # # test_player = Player(session.get('user_id'), 'John', 'john.do@email.com', 5000)
+        # # game = Five_Card_Draw(test_player,100)
+        # hand = game.get_hand()
+        # update_game(game,1)
 
         # Check if there an existing game in the database that is incomplete
 
-        return render_template('index.jinja', hand = enumerate(hand), name=name)
+        return render_template('index.jinja', name=user_profile.name)
 
 @app.route('/action', methods = ['POST'])
 def action():
 
-    loaded_game = read_game(1)
+    loaded_game = read_gamedb(1)
     game = loaded_game
     form_request = list(request.form)
     game.redraw(form_request)
     print("FORM REQUEST",form_request)
-    update_game(game,1)
+    update_gamedb(game,1)
     return redirect('/')
 
 # LOGIN #
@@ -102,13 +122,13 @@ def login_action():
         session['fields_empty'] = True
         return redirect('/login') 
 
+    # Need to update with player class
     if user_exists_of_email(login_email):
         user_profile = user_profile_of_email(login_email)
-        password_hash = user_profile['password_hash']
-        password_is_valid = bcrypt.checkpw(login_password.encode(), password_hash.encode())
+        password_hash = user_profile.passwordHash
         
-        if password_is_valid:
-            session['user_id'] = user_profile['id']
+        if is_password_correct(login_password, password_hash):
+            session['user_id'] = user_profile.id
             return redirect("/")
         
     session['wrong_details'] = True
@@ -171,21 +191,21 @@ def logout():
 @app.route('/sort', methods = ['POST'])
 def sort():
     
-    loaded_game = read_game(1)
+    loaded_game = read_gamedb(1)
     game = loaded_game
     game.hand_sort()
-    update_game(game,1)
+    update_gamedb(game,1)
 
     return redirect('/')
 
 @app.route('/checkwin', methods = ['POST'])
 def checkwin():
-    loaded_game = read_game(1)
+    loaded_game = read_gamedb(1)
     game = loaded_game
     game.bet = int(request.form.get('bet'))
     hand = game.get_hand()
     result_tuple = game.payout()
-    update_game(game,1)
+    update_gamedb(game,1)
     return render_template('index.jinja', hand = enumerate(hand), game_case = result_tuple[0], payout = result_tuple[1])
 
 if __name__ == '__main__':

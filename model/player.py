@@ -12,11 +12,12 @@ class Player:
         > Players Hand 
 
     """
-    def __init__(self, id, name, email, wallet, isAdmin = False):
+    def __init__(self, id, name, email, passwordHash, wallet, isAdmin = False):
         # Will be retrieved from databse
         self.id = id 
         self.name = name 
         self.email = email
+        self.passwordHash = passwordHash
         self.wallet = wallet
         self.isAdmin = isAdmin
         self.lastLogin = time()

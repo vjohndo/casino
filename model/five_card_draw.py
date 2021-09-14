@@ -1,13 +1,14 @@
-from player import Player
-from deck import Deck
+from model.player import Player
+from model.deck import Deck
 
-test_player = Player(1, 'John', 'john.do@email.com', 5000)
+test_player = Player(1, 'John', 'john.do@email.com', 'haha', 5000)
 
 
 class Five_Card_Draw():
 
-    def __init__(self, player, bet_amount = 10):
-        self.player = player
+    def __init__(self, player_id, bet_amount = 10):
+        self.game_instance_id = None
+        self.player_id = player_id
         self.bet_amount = bet_amount
         self.deck = Deck()
         self._hand = []
@@ -127,6 +128,6 @@ class Five_Card_Draw():
 
 game = Five_Card_Draw(test_player,100)
 game.any_wins()
-print(game.hand)
-print(game.payout()[0])
+# print(game.hand)
+# print(game.payout()[0])
 # game.redraw()
