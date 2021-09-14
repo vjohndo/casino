@@ -1,4 +1,4 @@
-from model.played_games import add_game
+from model.played_games import create_game
 from flask import Flask, render_template, request, redirect, session
 import bcrypt
 import pickle
@@ -6,7 +6,7 @@ import pickle
 from model.five_card_draw import Five_Card_Draw
 from model.player import Player
 from model.user import *
-from model.played_games import add_game, load_game, update_game
+from model.played_games import create_game, read_game, update_game
 
 app = Flask(__name__)
 
@@ -18,23 +18,37 @@ app = Flask(__name__)
 # game = Five_Card_Draw(test_player,100)
 # pickle_string = pickle.dumps(game)
 
-
-
-
 app.config['SECRET_KEY'] = 'ThisKeyTesting'
 
 
+# @app.route('/create_game')
+# def create_game():
+
+#     # Get a player class
+#     test_player = Player(1, 'John', 'john.do@email.com', 5000)
+
+#     temp_game = Five_Card_Draw()
+#     create_game()
+
+#     return redirect("/")
+#     """ 
+#     Need to create a route to create the game 
+#     """
+
 @app.route('/')
 def index():
-    
-    
+
+    """ 
+    Route to direct to landing page rather than an active version of the game
+    Need to create proper player class before doing this. 
+    """
 
     if session.get('user_id') is None: 
         return render_template('index.jinja', hand = enumerate(hand))
     else:
         name = name_of_id(session.get('user_id'))
         # Create an instance of the player object & Game
-        loaded_game = load_game(1)
+        loaded_game = read_game(1)
         game = loaded_game
         
         # test_player = Player(session.get('user_id'), 'John', 'john.do@email.com', 5000)
@@ -49,7 +63,7 @@ def index():
 @app.route('/action', methods = ['POST'])
 def action():
 
-    loaded_game = load_game(1)
+    loaded_game = read_game(1)
     game = loaded_game
     form_request = list(request.form)
     game.redraw(form_request)
@@ -157,7 +171,7 @@ def logout():
 @app.route('/sort', methods = ['POST'])
 def sort():
     
-    loaded_game = load_game(1)
+    loaded_game = read_game(1)
     game = loaded_game
     game.hand_sort()
     update_game(game,1)
@@ -166,7 +180,7 @@ def sort():
 
 @app.route('/checkwin', methods = ['POST'])
 def checkwin():
-    loaded_game = load_game(1)
+    loaded_game = read_game(1)
     game = loaded_game
     game.bet = int(request.form.get('bet'))
     hand = game.get_hand()

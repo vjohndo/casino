@@ -1,3 +1,5 @@
+from datetime import time
+
 class Player:
     """
     Class for a player
@@ -10,17 +12,13 @@ class Player:
         > Players Hand 
 
     """
-    def __init__(self, id, name, email, wallet):
+    def __init__(self, id, name, email, wallet, isAdmin = False):
         # Will be retrieved from databse
         self.id = id 
         self.name = name 
         self.email = email
         self.wallet = wallet
+        self.isAdmin = isAdmin
+        self.lastLogin = time()
 
-        # Will be supplied by the game
-        self.hand = []
-
-    def get_hand(self):
-        return [str(card) for card in self.hand]
-
-    
+test = Player(1, 'john', 'john.do@mail', 1231, True)

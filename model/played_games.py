@@ -1,7 +1,7 @@
 from model.database import sql_select, sql_write
 import pickle 
 
-def add_game(game_instance):
+def create_game(game_instance):
 
     pickled_game = pickle.dumps(game_instance)
 
@@ -19,9 +19,7 @@ def update_game(game_instance, game_id):
         [pickled_game, game_id]
     )
 
-
-
-def load_game(played_game_id):
+def read_game(played_game_id):
     
     pickled_game = sql_select("SELECT pickled_game FROM played_games WHERE id = %s",[played_game_id])[0][0]
     unpickled_game = pickle.loads(pickled_game)

@@ -1,5 +1,5 @@
-from model.player import Player
-from model.deck import Deck
+from player import Player
+from deck import Deck
 
 test_player = Player(1, 'John', 'john.do@email.com', 5000)
 
@@ -10,6 +10,7 @@ class Five_Card_Draw():
         self.player = player
         self.bet_amount = bet_amount
         self.deck = Deck()
+        self._hand = []
         self.prize_dict = {
             'royal_flush': 800,
             'straight_flush': 50,
@@ -24,10 +25,10 @@ class Five_Card_Draw():
         }
 
         for i in range(5):
-            self.player.hand.append(self.deck.deal())
-    
+            self._hand.append(self.deck.deal())
+
     def get_hand(self):
-        return self.player.get_hand()
+        return [str(card) for card in self._hand]
 
     hand = property(get_hand)
 
@@ -40,13 +41,13 @@ class Five_Card_Draw():
     bet = property(get_bet, set_bet)
 
     def hand_sort(self):
-        self.player.hand.sort()
+        self._hand.sort()
 
     def redraw(self, index_list):
         indexes_to_redraw = [int(char) for char in index_list]
         
         for index in indexes_to_redraw:
-            self.player.hand[index] = self.deck.deal()
+            self._hand[index] = self.deck.deal()
 
     def any_wins(self):
         """ Checks through all possible win combinations and returns a dictionary """
@@ -64,15 +65,15 @@ class Five_Card_Draw():
         }
 
         # Check the players hand using the all function
-        is_flush = all([card.suit == self.player.hand[0].suit for card in self.player.hand])
+        is_flush = all([card.suit == self._hand[0].suit for card in self._hand])
        
         # Check any all the rank combinations
         card_value_counts = {}
-        for card in self.player.hand:
+        for card in self._hand:
             card_value_counts[card.poker_value] = card_value_counts.get(card.poker_value, 0) + 1
 
         # Create a list with poker_values
-        hand_as_values = [card.poker_value for card in self.player.hand]
+        hand_as_values = [card.poker_value for card in self._hand]
         hand_as_values.sort()
 
         # Royal Flush
@@ -119,12 +120,13 @@ class Five_Card_Draw():
 
     def payout(self):
         win_table = self.any_wins()
-        winning_string = [string for string, state in win_table.items() if win_table[string]]
+        winning_string = [string for string in win_table.keys() if win_table[string]]
         return (winning_string[0],self.prize_dict[winning_string[0]]*self.bet_amount)
 
 
 
 game = Five_Card_Draw(test_player,100)
 game.any_wins()
+print(game.hand)
 print(game.payout()[0])
 # game.redraw()

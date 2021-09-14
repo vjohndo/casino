@@ -13,7 +13,7 @@ CREATE TABLE users (
 INSERT INTO users (name, email, password_hash, wallet, is_admin) VALUES ('john', 'john@email.com', 'password_hash', 1000, TRUE);
 INSERT INTO users (name, email, password_hash, wallet, is_admin) VALUES ('testperson', 'testperson@email.com', 'password_hash', 1000, FALSE);
 
--- Played_games
+-- Played_games.. need a better name than this. 
 CREATE TABLE played_games (
     id SERIAL PRIMARY KEY,
     user_id INTEGER,
@@ -23,7 +23,6 @@ CREATE TABLE played_games (
     game_over BOOLEAN,
     result INTEGER
 );
-
 
 
 -- Vault
