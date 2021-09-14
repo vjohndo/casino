@@ -39,7 +39,6 @@ def play_game():
 
     # Get a player class
     player = user_profile_of_id(session.get('user_id'))
-
     # Check if there are any active games
     if any_active_gamedb(player.id):
         
@@ -48,6 +47,8 @@ def play_game():
         session['game_instance_id'] = game_id
         game = read_gamedb(game_id)
         update_gamedb(game)
+    else:
+        return redirect('/create_game')
     
     return render_template("play_game.jinja", name = player.name, enumerated_hand = enumerate(game.hand))
 
