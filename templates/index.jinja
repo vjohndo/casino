@@ -1,4 +1,6 @@
 {% extends "base.jinja" %}
 {% block content %}
-<h1> This is John's Casino <h2>
+<button id='fiveCardPokerButton'> Five Card Poker </button>
+<button id='blackjackButton '> Blackjack </button>
+<script src="{{url_for('static',filename='script.js')}}"></script>
 {% endblock content %}

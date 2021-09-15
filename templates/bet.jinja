@@ -1,0 +1,19 @@
+{% extends "base.jinja" %}
+{% block content %}
+
+    <h2> Five Card Poker </h2>
+
+    <div id='display'>
+    {% for i in enumerated_hand %} 
+        <img class="selected" src="{{url_for('static', filename = 'cardbackblack.png')}}">
+    {% endfor %}
+    </div>
+
+    <form action="/play_game" method="POST">
+        <input type='text' name='bet_value' value='{{ session['bet_amount'] }}'>
+        <input type='submit' name='bet_buttom' value='Submit Bet'>
+    </form>
+    {% if game_case %}
+    <p> You've won on a {{game_case}}, your payout it {{payout}}
+    {% endif %}
+{% endblock content %}

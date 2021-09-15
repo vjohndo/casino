@@ -19,3 +19,9 @@ def user_profile_of_id(id):
 def add_user(email, name, password_hash):
     sql_write("INSERT INTO users (email, name, password_hash) VALUES (%s, %s, %s)",[email, name, password_hash])
 
+def update_player(player):
+
+    sql_write(
+        "UPDATE users SET wallet = %s WHERE id = %s",
+        [player.wallet, player.id]
+    )

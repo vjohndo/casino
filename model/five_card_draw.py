@@ -13,6 +13,7 @@ class Five_Card_Draw():
         self.player_id = player_id
         self.bet_amount = bet_amount
         self.deck = Deck()
+        self.bet_placed = False
         self._hand = []
         self.prize_dict = {
             'royal_flush': 800,

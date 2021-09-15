@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, session
 
 from model.encryption import is_password_correct, hashpw
 from model.five_card_draw import Five_Card_Draw
-from model.user import user_exists_of_email, user_profile_of_id, user_profile_of_email, add_user
+from model.user import user_exists_of_email, user_profile_of_id, user_profile_of_email, add_user, update_player
 from model.played_games import create_gamedb, read_gamedb, update_gamedb
 
 app = Flask(__name__)
@@ -17,10 +17,10 @@ def index():
 
     else:
         user_profile = user_profile_of_id(session.get('user_id'))
-        return render_template('index.jinja', name=user_profile.name)
+        return render_template('index.jinja', name=user_profile.name, wallet=user_profile.wallet)
 
 # FIVE CARD POKER
-@app.route('/create_game')
+@app.route('/create_game', methods=['GET','POST'])
 def create_game():
 
     # Get a player class
@@ -31,26 +31,74 @@ def create_game():
 
     # Create an entry of the game in the database
     create_gamedb(game_init)
+    session['placed_bet'] = False
+    session['game_over'] = False
+    return redirect("/bet_game")
 
-    return redirect("/play_game")
+# BET # THIS IS THE PROBLEM ONE. 
+@app.route('/bet_game')
+def poker_place_bet():
 
-@app.route('/play_game')
+    # If the player has already placed bet, route to game
+    if not session.get('placed_bet'):
+
+        # Get a player class
+        player = user_profile_of_id(session.get('user_id'))    
+        # Check if there are any active games
+        if any_active_gamedb(player.id):
+
+            # Open up that game we just created
+            game_id = get_gameID_by_userID(player.id)
+            session['game_instance_id'] = game_id
+            game = read_gamedb(game_id)
+
+            if game.bet_placed == True:
+                return redirect('/play_game')
+            else:
+                return render_template('bet.jinja', name = player.name, enumerated_hand = enumerate(game.hand), wallet=player.wallet)
+        else:
+            return redirect('/create_game')
+    else:
+        return redirect('/create_game')
+
+    #     # Otherwise create a new game
+    #     else:
+    #         return redirect('/create_game')
+    
+    # # otherwise create a new game 
+    # else:
+    #     return redirect('/create_game')
+    
+
+@app.route('/play_game', methods=['POST','GET'])
 def play_game():
 
     # Get a player class
     player = user_profile_of_id(session.get('user_id'))
+    
     # Check if there are any active games
+    # At this stage the player has already placed a bet
     if any_active_gamedb(player.id):
         
-        # Open up that active game
+        # open up the game
         game_id = get_gameID_by_userID(player.id)
         session['game_instance_id'] = game_id
         game = read_gamedb(game_id)
+
+        # update the bet amount
+        if game.bet_placed == False:
+            game.bet_amount = int(request.form.get('bet_value'))
+            player.wallet = player.wallet - game.bet_amount
+            update_player(player)
+            session['placed_bet'] = True
+            game.bet_placed = True
+        
         update_gamedb(game)
+        return render_template("play_game.jinja", name = player.name, enumerated_hand = enumerate(game.hand), wallet=player.wallet)
+    
     else:
         return redirect('/create_game')
     
-    return render_template("play_game.jinja", name = player.name, enumerated_hand = enumerate(game.hand))
 
 @app.route('/game_redraw', methods = ['POST'])
 def action():
@@ -77,15 +125,27 @@ def sort():
 @app.route('/checkwin', methods = ['POST'])
 def checkwin():
 
-    game_id = session.get('game_instance_id')
-    game = read_gamedb(game_id)
-    game.bet = int(request.form.get('bet'))
-    result_tuple = game.payout()
-    update_gamedb(game)
+    if not session.get('game_over'):
+        # Get a player class
+        player = user_profile_of_id(session.get('user_id'))
 
-    return render_template('play_game.jinja', enumerated_hand = enumerate(game.hand), game_case = result_tuple[0], payout = result_tuple[1])
+        game_id = session.get('game_instance_id')
+        game = read_gamedb(game_id)
+        result_tuple = game.payout()
+        player.wallet = player.wallet + result_tuple[1]
+        update_player(player)
+        game.isOver = True
+        # need to ensure the game is only checked once
+        update_gamedb(game)
 
-# LOGIN #
+        session['game_over'] = True
+
+        return render_template('play_game.jinja',name = player.name, wallet=player.wallet, enumerated_hand = enumerate(game.hand), game_case = result_tuple[0], payout = result_tuple[1])
+    else: 
+        return redirect('/')
+
+
+### LOGIN ###
 @app.route("/login")
 def login():
     if session.get('user_id'):

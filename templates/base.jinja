@@ -5,16 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Casino</title>
+    <link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
 </head>
 <body>
+    <header>
+    <h1>  Casino </h1>
     {% if name %}
         <a href="/logout">LOGOUT</a>
         <p> Logged in as {{name}} </p>
+        <p> Wallet: {{wallet}} </p>
     {% else %}
         <header><a href="/login">LOGIN</a>
         <p> Not logged in</p>
     {% endif %}
+    </header>
+
+    <main>
     {% block content %}
+
     {% endblock content %}
+    </main>
 </body>
 </html>
