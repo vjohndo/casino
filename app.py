@@ -1,13 +1,36 @@
 from model.played_games import any_active_gamedb, create_gamedb, get_gameID_by_userID
 from flask import Flask, render_template, request, redirect, session
+from datetime import datetime, timedelta, date
 
 from model.encryption import is_password_correct, hashpw
 from model.five_card_draw import Five_Card_Draw
 from model.user import user_exists_of_email, user_profile_of_id, user_profile_of_email, add_user, update_player
 from model.played_games import create_gamedb, read_gamedb, update_gamedb
 
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ThisKeyTesting'
+
+# Money Collection
+@app.route('/collect')
+def collect_daily():
+    # Get a player class
+    player = user_profile_of_id(session.get('user_id'))
+    print(type(player.last_login))
+
+    time_delta = (date.today() - player.last_login).days
+    print(time_delta)
+
+    if time_delta >= 1:
+        player.last_login = date.today()
+        print(player.last_login)
+        player.wallet += 100
+        update_player(player)
+        return redirect('/')
+    
+    else:
+        return 'TOO EARLY TO COLLECT'
+
 
 # LANDING PAGE
 @app.route('/')
@@ -134,7 +157,7 @@ def checkwin():
         result_tuple = game.payout()
         player.wallet = player.wallet + result_tuple[1]
         update_player(player)
-        game.isOver = True
+        game.is_over = True
         # need to ensure the game is only checked once
         update_gamedb(game)
 
