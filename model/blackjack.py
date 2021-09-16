@@ -1,29 +1,31 @@
-from player import Player
-from deck import Deck, Card
+from model.player import Player
+from model.deck import Deck, Card
 
 class Blackjack():
 
-    def __init__(self, player_id, bet_amount = 10):
+    def __init__(self, player_id):
         self.game_instance_id = None
-        self.game_over = False
-        self.result = None
-        self.payout_amount = None
+        self.game_mode_id = 2
+        self.is_over = False
+        self.payout_amount = 0
         self.player_id = player_id
-        self.bet_amount = bet_amount
+        self.bet_amount = 0
+        self.bet_placed = False
         self.deck = Deck()
-        self.player_hand = []
-        self.dealer_hand = []
+        self._player_hand = []
+        self._dealer_hand = []
         self.player_score = 0
         self.dealer_score = 0
         self.player_blackjack = False
         self.dealer_blackjack = False
         self.player_bust = False
         self.dealer_bust = False
+        self.winner = None
 
         # Deal to dealer_
         for i in range(2):
-            self.player_hand.append(self.deck.deal())
-            self.dealer_hand.append(self.deck.deal())
+            self._player_hand.append(self.deck.deal())
+            self._dealer_hand.append(self.deck.deal())
 
         # Check for blackjacks
         self.score_dealer_hand()
@@ -37,7 +39,7 @@ class Blackjack():
 
     # Need a way to evaluate the total of hand
     def score_player_hand(self):
-        hand_as_values = [card.blackjack_value for card in self.player_hand]
+        hand_as_values = [card.blackjack_value for card in self._player_hand]
 
         # Need to keep reducing all Aces in hand should your total value be above 21
         while sum(hand_as_values) > 21 and 11 in hand_as_values:
@@ -51,7 +53,7 @@ class Blackjack():
 
 
     def score_dealer_hand(self):
-        hand_as_values = [card.blackjack_value for card in self.dealer_hand]
+        hand_as_values = [card.blackjack_value for card in self._dealer_hand]
 
         # Need to keep reducing all Aces in hand should your total value be above 21
         while sum(hand_as_values) > 21 and 11 in hand_as_values:
@@ -66,12 +68,12 @@ class Blackjack():
 
     ## Will need to account for the dealers and players blackjacl
     def takes(self):
-        self.dealer_hand.append(self.deck.deal())
+        self._dealer_hand.append(self.deck.deal())
         self.score_dealer_hand()
 
     
     def hit(self):
-        self.player_hand.append(self.deck.deal())
+        self._player_hand.append(self.deck.deal())
         self.score_player_hand()
 
     def dealer_plays(self):
@@ -83,41 +85,53 @@ class Blackjack():
     # This is to compare the results
     def results(self):
 
-        # Check all blackjack conditions
+        self.is_over = True
 
+        # Check all blackjack conditions
         if self.player_blackjack and self.dealer_blackjack:
-            self.result = 'DRAW'
             self.payout_amount = self.bet_amount
+            self.winner = 'DRAW'
 
         elif self.player_blackjack and not self.dealer_blackjack:
-            self.result = "Player's Blackjack"
             self.payout_amount = self.bet_amount * 2.5
+            self.winner = 'PLAYER'
         
         elif not self.player_blackjack and self.dealer_blackjack:
-            self.result = "Dealers's Blackjack"
             self.payout_amount = 0
+            self.winner = 'HOUSE'
 
         # Compare scores
         else:
             if self.player_score == self.dealer_score:
-                self.result = 'DRAW'
                 self.payout_amount = self.bet_amount
+                self.winner = 'DRAW'
 
             elif self.player_score > self.dealer_score:
-                self.result = "Player Wins"
                 self.payout_amount = self.bet_amount * 2
+                self.winner = 'PLAYER'
             
-            elif not self.player_score < self.dealer_score:
-                self.result = "Dealers Wins"
+            elif self.player_score < self.dealer_score:
                 self.payout_amount = 0
-            
+                self.winner = 'HOUSE'
+
 
         # Set game to finished
-        self.game_over = True
+        self.is_over = True
 
     def get_hands(self):
-        print('PLAYERS HAND: ',self.player_hand)
-        print('DEALERS HAND: ',self.dealer_hand)
+        print('PLAYERS HAND: ',self._player_hand)
+        print('DEALERS HAND: ',self._dealer_hand)
+
+
+    def get_player_hand(self):
+        return [str(card) for card in self._player_hand]
+
+    player_hand = property(get_player_hand)
+
+    def get_dealer_hand(self):
+        return [str(card) for card in self._dealer_hand]
+
+    dealer_hand = property(get_dealer_hand)
 
 
 test = Blackjack(1)

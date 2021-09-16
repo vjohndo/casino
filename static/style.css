@@ -12,7 +12,7 @@ header {
     background-color: rgb(34, 180, 34);
 }
 
-#display {
+#display #dealer_display {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;

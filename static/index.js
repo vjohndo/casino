@@ -6,5 +6,5 @@ fiveCardPokerButton.onclick = function() {
 }
 
 blackjackButon.onclick = function() {
-    window.location.replace("/bet_game")
+    window.location.replace("/create_game_blackjack")
 }

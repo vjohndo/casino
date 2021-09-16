@@ -6,12 +6,13 @@ test_player = Player(1, 'John', 'john.do@email.com', 'haha', 5000)
 
 class Five_Card_Draw():
 
-    def __init__(self, player_id, bet_amount = 10):
+    def __init__(self, player_id):
         self.game_instance_id = None
         self.is_over = False
+        self.game_mode_id = 1
         self.payout_amount = None
         self.player_id = player_id
-        self.bet_amount = bet_amount
+        self.bet_amount = 0
         self.deck = Deck()
         self.bet_placed = False
         self._hand = []

@@ -1,0 +1,32 @@
+{% extends "base.jinja" %}
+{% block content %}
+<h1> Blackjack #{{game_instance}} <h2>
+
+    <div id='dealerDisplay'>
+        {% for i, card_str in dealer_hand %} 
+            <img id='dealerImg{{i}}' src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png">
+        {% endfor %}
+    </div>
+
+
+    <div id='display'>
+    {% for i, card_str in enumerated_hand %} 
+        <p id='cardString'> {{card_str}} <input id='checkbox{{i}}' type="checkbox" name={{i}} ></p>
+        <img id='img{{i}}' class="playingCard" src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png">
+    {% endfor %}
+
+    <h2> BET: {{bet_amount}} </h2>
+    {% if not game_over %}
+        {% if not no_hits %}
+        <form action="/blackjack_hit" method="POST">
+            <input type='submit' value='HIT'>
+        </form>
+        {% endif %}
+        <form action="/blackjack_stay" method="POST">
+            <input type='submit' value='STAY'>
+        </form>
+    {% else %}
+        <p> Gameover, {{game.winner}} wins. your payout is {{game.payout_amount}} </p>
+    {% endif %}
+    <script src="{{url_for('static',filename='script.js')}}"></script>
+{% endblock content %}

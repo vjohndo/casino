@@ -14,15 +14,15 @@ INSERT INTO users (name, email, password_hash, wallet, is_admin) VALUES ('testpe
 
 -- Played_games.. need a better name than this. 
 -- NEED TO DEFINE CONSTRAINTS
-CREATE TABLE played_games (
+CREATE TABLE game_instances (
     id SERIAL PRIMARY KEY,
-    user_id INTEGER
+    user_id INTEGER,
     game_mode_id INTEGER,
     bet_amount INTEGER,
     pickled_game BYTEA,
     game_over BOOLEAN,
-    result INTEGER
-    CONSTRAINT fk_player FOREIGN KEY(user_id) REFERENCES users(id)
+    result INTEGER,
+    CONSTRAINT fk_player FOREIGN KEY(user_id) REFERENCES users(id),
     CONSTRAINT fk_game_mode FOREIGN KEY(game_mode_id) REFERENCES game_modes(id)
 );
 
@@ -30,7 +30,7 @@ CREATE TABLE played_games (
 -- Game_types
 CREATE TABLE game_modes (
     id SERIAL PRIMARY KEY,
-    name = TEXT
+    name TEXT
 )
 
 INSERT INTO game_modes (name) VALUES ('five_card_poker');

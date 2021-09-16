@@ -1,15 +1,16 @@
-from model.played_games import any_active_gamedb, create_gamedb, get_gameID_by_userID
+from model.played_games import any_active_gamedb, create_gamedb, get_pokerID_by_userID, get_blackjackID_by_userID
 from flask import Flask, render_template, request, redirect, session
 from datetime import datetime, timedelta, date
 import os
 
 from model.encryption import is_password_correct, hashpw
 from model.five_card_draw import Five_Card_Draw
+from model.blackjack import Blackjack
 from model.user import user_exists_of_email, user_profile_of_id, user_profile_of_email, add_user, update_player
 from model.played_games import create_gamedb, read_gamedb, update_gamedb
 
 
-DB_URL = os.environ.get("DATABASE_URL", "dbname=casino")
+
 SECRET_KEY = os.environ.get("SECRET_KEY", 'ThisKeyTesting')
 
 app = Flask(__name__)
@@ -35,7 +36,6 @@ def collect_daily():
     else:
         return 'TOO EARLY TO COLLECT'
 
-
 # LANDING PAGE
 @app.route('/')
 def index():
@@ -45,6 +45,115 @@ def index():
     else:
         user_profile = user_profile_of_id(session.get('user_id'))
         return render_template('index.jinja', name=user_profile.name, wallet=user_profile.wallet)
+
+# BLACK JACK
+@app.route('/create_game_blackjack', methods=['GET','POST'])
+def create_game_blackjack():
+
+    # Get a player class
+    player = user_profile_of_id(session.get('user_id'))
+
+    # Create an instance of the blackjack game
+    game_init = Blackjack(player.id)
+    create_gamedb(game_init)
+
+    # Create an entry of the game in the database
+    return redirect('/bet_game_blackjack')
+
+@app.route('/bet_game_blackjack')
+def blackjack_place_bet():
+
+    # Open up that game we just created
+    player = user_profile_of_id(session.get('user_id'))
+    game_id = get_blackjackID_by_userID(player.id)
+    session['game_instance_id_blackjack'] = game_id
+    game = read_gamedb(game_id)
+    
+    return render_template(
+                    'bet_blackjack.jinja',
+                    name = player.name,
+                    enumerated_hand = enumerate(game.player_hand),
+                    wallet=player.wallet,
+                    game_instance = game.game_instance_id
+    )
+
+@app.route('/play_game_blackjack', methods=['POST','GET'])
+def play_game_blackjack():
+
+    # open up the game
+    player = user_profile_of_id(session.get('user_id'))
+    game_id = get_blackjackID_by_userID(player.id)
+    session['game_instance_id_blackjack'] = game_id
+    game = read_gamedb(game_id)
+
+    # update the bet amount
+    if game.bet_placed == False:
+        game.bet_amount = int(request.form.get('bet_value'))
+        player.wallet = player.wallet - game.bet_amount
+        update_player(player)
+        session['placed_bet_blackjack'] = True
+        game.bet_placed = True
+        update_gamedb(game)
+    
+    no_hits = False
+
+
+    if game.player_bust == True or game.player_blackjack == True:
+        no_hits = True 
+    
+    return render_template(
+                    "play_game_blackjack.jinja",
+                    game = game, 
+                    no_hits = no_hits, 
+                    name = player.name, 
+                    dealer_hand = enumerate(game.dealer_hand), 
+                    enumerated_hand = enumerate(game.player_hand), 
+                    wallet=player.wallet, bet_amount=game.bet_amount, 
+                    game_instance = game.game_instance_id
+    )
+
+
+@app.route('/blackjack_hit', methods=['POST','GET'])
+def blackjack_hit():
+    game_id = session.get('game_instance_id_blackjack')
+    game = read_gamedb(game_id)
+    game.hit()
+    update_gamedb(game)
+
+    return redirect('/play_game_blackjack')
+
+@app.route('/blackjack_stay', methods=['POST','GET'])
+def blackjack_stay():
+
+    game_id = session.get('game_instance_id_blackjack')
+    game = read_gamedb(game_id)
+    game.dealer_plays()
+    update_gamedb(game)
+
+    return redirect('/checkwin_blackjack')
+
+
+@app.route('/checkwin_blackjack', methods=['POST','GET'])
+def checkwin_blackjack():
+    player = user_profile_of_id(session.get('user_id'))
+    game_id = session.get('game_instance_id_blackjack')
+    game = read_gamedb(game_id)
+    game.results()
+    player.wallet += game.payout_amount
+    update_gamedb(game)
+    update_player(player)
+    no_hits = False
+
+    return render_template(
+                    "play_game_blackjack.jinja", 
+                    game=game , 
+                    game_over = game.is_over, 
+                    no_hits = no_hits, name = player.name, 
+                    dealer_hand = enumerate(game.dealer_hand), 
+                    enumerated_hand = enumerate(game.player_hand), 
+                    wallet=player.wallet, bet_amount=game.bet_amount, 
+                    game_instance = game.game_instance_id
+    )
 
 # FIVE CARD POKER
 @app.route('/create_game', methods=['GET','POST'])
@@ -74,10 +183,10 @@ def poker_place_bet():
             # Get a player class
             player = user_profile_of_id(session.get('user_id'))    
             # Check if there are any active games
-            if any_active_gamedb(player.id):
+            if any_active_gamedb(player.id, 1):
 
                 # Open up that game we just created
-                game_id = get_gameID_by_userID(player.id)
+                game_id = get_pokerID_by_userID(player.id)
                 session['game_instance_id'] = game_id
                 game = read_gamedb(game_id)
                 print(game.bet_placed)
@@ -104,10 +213,10 @@ def play_game():
     
     # Check if there are any active games
     # At this stage the player has already placed a bet
-    if any_active_gamedb(player.id):
+    if any_active_gamedb(player.id,1):
         
         # open up the game
-        game_id = get_gameID_by_userID(player.id)
+        game_id = get_pokerID_by_userID(player.id)
         session['game_instance_id'] = game_id
         game = read_gamedb(game_id)
 
