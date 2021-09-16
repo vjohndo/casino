@@ -1,7 +1,7 @@
 import psycopg2 
 
 def sql_select(query, parameters = None):
-    conn = psycopg2.connect("dbname=casino")
+    conn = psycopg2.connect(DB_URL)
     cur = conn.cursor()
     if parameters is not None:
         cur.execute(query,parameters)
@@ -13,7 +13,7 @@ def sql_select(query, parameters = None):
     return result
 
 def sql_write(query, parameters = None):
-    conn = psycopg2.connect("dbname=casino")
+    conn = psycopg2.connect(DB_URL)
     cur = conn.cursor()
     if parameters is not None:
         cur.execute(query,parameters)

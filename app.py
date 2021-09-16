@@ -10,9 +10,10 @@ from model.played_games import create_gamedb, read_gamedb, update_gamedb
 
 
 DB_URL = os.environ.get("DATABASE_URL", "dbname=casino")
+SECRET_KEY = os.environ.get("SECRET_KEY", 'ThisKeyTesting')
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'ThisKeyTesting'
+app.config['SECRET_KEY'] = SECRET_KEY
 
 # Money Collection
 @app.route('/collect')
