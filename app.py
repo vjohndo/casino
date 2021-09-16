@@ -89,7 +89,7 @@ def poker_place_bet():
             return redirect('/create_game')
         
     else:
-        return redirect('/')
+        return redirect('/login')
     
 
 @app.route('/play_game', methods=['POST','GET'])

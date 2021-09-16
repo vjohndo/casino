@@ -31,11 +31,14 @@ class Five_Card_Draw():
         for i in range(5):
             self._hand.append(self.deck.deal())
 
+    
+    # Hand properties
     def get_hand(self):
         return [str(card) for card in self._hand]
 
     hand = property(get_hand)
 
+    # Bet properties
     def get_bet(self):
         return self.bet_amount
     
@@ -44,15 +47,18 @@ class Five_Card_Draw():
     
     bet = property(get_bet, set_bet)
 
+    # Hand sort
     def hand_sort(self):
         self._hand.sort()
 
+    # Hand Redraw
     def redraw(self, index_list):
         indexes_to_redraw = [int(char) for char in index_list]
         
         for index in indexes_to_redraw:
             self._hand[index] = self.deck.deal()
 
+    # Checks for any wins
     def any_wins(self):
         """ Checks through all possible win combinations and returns a dictionary """
         winning_combos = {
@@ -122,6 +128,7 @@ class Five_Card_Draw():
 
         return winning_combos
 
+    # Determines payout
     def payout(self):
         win_table = self.any_wins()
         winning_string = [string for string in win_table.keys() if win_table[string]]
@@ -130,9 +137,9 @@ class Five_Card_Draw():
         return (winning_string[0],self.prize_dict[winning_string[0]]*self.bet_amount)
 
 
-
-game = Five_Card_Draw(test_player,100)
-game.any_wins()
-# print(game.hand)
-# print(game.payout()[0])
-# game.redraw()
+def main_test():
+    game = Five_Card_Draw(test_player,100)
+    game.any_wins()
+    print(game.hand)
+    print(game.payout()[0])
+    game.redraw()

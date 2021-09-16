@@ -1,4 +1,4 @@
-from datetime import time
+from datetime import date
 
 class Player:
     """
@@ -12,7 +12,7 @@ class Player:
         > Players Hand 
 
     """
-    def __init__(self, id, name, email, passwordHash, wallet, isAdmin=False, last_login=None):
+    def __init__(self, id, name, email, passwordHash, wallet, isAdmin=False, last_login=date(1900,1,1)):
         # Will be retrieved from databse
         self.id = id 
         self.name = name 
