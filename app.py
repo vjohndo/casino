@@ -1,12 +1,15 @@
 from model.played_games import any_active_gamedb, create_gamedb, get_gameID_by_userID
 from flask import Flask, render_template, request, redirect, session
 from datetime import datetime, timedelta, date
+import os
 
 from model.encryption import is_password_correct, hashpw
 from model.five_card_draw import Five_Card_Draw
 from model.user import user_exists_of_email, user_profile_of_id, user_profile_of_email, add_user, update_player
 from model.played_games import create_gamedb, read_gamedb, update_gamedb
 
+
+DB_URL = os.environ.get("DATABASE_URL", "dbname=casino")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ThisKeyTesting'
