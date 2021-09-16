@@ -1,4 +1,7 @@
-import psycopg2 
+import psycopg2
+import os
+
+DB_URL = os.environ.get("DATABASE_URL", "dbname=casino")
 
 def sql_select(query, parameters = None):
     conn = psycopg2.connect(DB_URL)
