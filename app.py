@@ -62,35 +62,34 @@ def create_game():
 @app.route('/bet_game')
 def poker_place_bet():
 
-    # If the player has already placed bet, route to game
-    if not session.get('placed_bet'):
+    if session.get('user_id') is not None: 
 
-        # Get a player class
-        player = user_profile_of_id(session.get('user_id'))    
-        # Check if there are any active games
-        if any_active_gamedb(player.id):
+        # If the player has already placed bet, route to game
+        if not session.get('placed_bet'):
 
-            # Open up that game we just created
-            game_id = get_gameID_by_userID(player.id)
-            session['game_instance_id'] = game_id
-            game = read_gamedb(game_id)
+            # Get a player class
+            player = user_profile_of_id(session.get('user_id'))    
+            # Check if there are any active games
+            if any_active_gamedb(player.id):
 
-            if game.bet_placed == True:
-                return redirect('/play_game')
+                # Open up that game we just created
+                game_id = get_gameID_by_userID(player.id)
+                session['game_instance_id'] = game_id
+                game = read_gamedb(game_id)
+                print(game.bet_placed)
+
+
+                if game.bet_placed == True and game.is_over == False:
+                    return redirect('/play_game')
+                else:
+                    return render_template('bet.jinja', name = player.name, enumerated_hand = enumerate(game.hand), wallet=player.wallet, game_instance = game.game_instance_id)
             else:
-                return render_template('bet.jinja', name = player.name, enumerated_hand = enumerate(game.hand), wallet=player.wallet)
+                return redirect('/create_game')
         else:
             return redirect('/create_game')
+        
     else:
-        return redirect('/create_game')
-
-    #     # Otherwise create a new game
-    #     else:
-    #         return redirect('/create_game')
-    
-    # # otherwise create a new game 
-    # else:
-    #     return redirect('/create_game')
+        return redirect('/')
     
 
 @app.route('/play_game', methods=['POST','GET'])
@@ -115,9 +114,10 @@ def play_game():
             update_player(player)
             session['placed_bet'] = True
             game.bet_placed = True
+            update_gamedb(game)
         
-        update_gamedb(game)
-        return render_template("play_game.jinja", name = player.name, enumerated_hand = enumerate(game.hand), wallet=player.wallet)
+        print(game.bet_placed)
+        return render_template("play_game.jinja", name = player.name, enumerated_hand = enumerate(game.hand), wallet=player.wallet, bet_amount=game.bet_amount, game_instance = game.game_instance_id)
     
     else:
         return redirect('/create_game')
@@ -130,9 +130,10 @@ def action():
     game = read_gamedb(game_id)
     form_request = list(request.form)
     print(form_request)
-    game.redraw(form_request)
-    update_gamedb(game)
-
+    if form_request:
+        game.redraw(form_request)
+        game.bet_placed = True
+        update_gamedb(game)
     return redirect('/play_game')
 
 @app.route('/game_sort', methods = ['POST'])
@@ -141,19 +142,19 @@ def sort():
     game_id = session.get('game_instance_id')
     game = read_gamedb(game_id)
     game.hand_sort()
+    game.bet_placed = True
     update_gamedb(game)
 
     return redirect('/play_game')
 
 @app.route('/checkwin', methods = ['POST'])
 def checkwin():
+    # Get a player class
+    player = user_profile_of_id(session.get('user_id'))
+    game_id = session.get('game_instance_id')
+    game = read_gamedb(game_id)
 
-    if not session.get('game_over'):
-        # Get a player class
-        player = user_profile_of_id(session.get('user_id'))
-
-        game_id = session.get('game_instance_id')
-        game = read_gamedb(game_id)
+    if not game.is_over:
         result_tuple = game.payout()
         player.wallet = player.wallet + result_tuple[1]
         update_player(player)
@@ -163,7 +164,7 @@ def checkwin():
 
         session['game_over'] = True
 
-        return render_template('play_game.jinja',name = player.name, wallet=player.wallet, enumerated_hand = enumerate(game.hand), game_case = result_tuple[0], payout = result_tuple[1])
+        return render_template('play_game.jinja',name = player.name, wallet=player.wallet, enumerated_hand = enumerate(game.hand), game_case = result_tuple[0], payout = result_tuple[1], bet_amount=game.bet_amount, game_instance = game.game_instance_id)
     else: 
         return redirect('/')
 

@@ -1,11 +1,11 @@
 {% extends "base.jinja" %}
 {% block content %}
 
-    <h2> Five Card Poker </h2>
+    <h2> Five Card Poker #{{game_instance}}</h2>
 
     <div id='display'>
     {% for i in enumerated_hand %} 
-        <img class="selected" src="{{url_for('static', filename = 'cardbackblack.png')}}">
+        <img src="{{url_for('static', filename = 'cardbackblack.png')}}">
     {% endfor %}
     </div>
 
@@ -14,6 +14,6 @@
         <input type='submit' name='bet_buttom' value='Submit Bet'>
     </form>
     {% if game_case %}
-    <p> You've won on a {{game_case}}, your payout it {{payout}}
+    <p> You've won on a {{game_case}}, your payout is {{payout}}
     {% endif %}
 {% endblock content %}

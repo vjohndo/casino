@@ -1,5 +1,6 @@
 from model.database import sql_select, sql_write
 from model.player import Player
+from datetime import date
 
 def user_exists_of_email(email):
     fetched_items = sql_select("SELECT id FROM users WHERE email = %s", [email])
@@ -17,7 +18,7 @@ def user_profile_of_id(id):
     return Player(databse_result[0][0], databse_result[0][1], databse_result[0][2], databse_result[0][3], databse_result[0][4], databse_result[0][5], databse_result[0][6])
 
 def add_user(email, name, password_hash):
-    sql_write("INSERT INTO users (email, name, password_hash) VALUES (%s, %s, %s)",[email, name, password_hash])
+    sql_write("INSERT INTO users (email, name, password_hash, wallet, last_login) VALUES (%s, %s, %s, %s, %s)",[email, name, password_hash, 0, date(1900,1,1) ])
 
 def update_player(player):
 
