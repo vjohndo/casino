@@ -1,30 +1,44 @@
 {% extends "base.jinja" %}
 {% block content %}
-<h1> Five Card Poker #{{game_instance}} <h2>
+<h2> Five Card Poker #{{game_instance}} <h2>
 
     <form action="/game_redraw" method='POST' >
-        <div id='display'>
+        <div id='display_poker'>
         {% for i, card_str in enumerated_hand %} 
             <p id='cardString'> {{card_str}} <input id='checkbox{{i}}' type="checkbox" name={{i}} ></p>
             <img id='img{{i}}' class="playingCard" src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png">
         {% endfor %}
         </div>
-        <h2> BET: {{bet_amount}} </h2>
-        <input type='submit' value='REDRAW'>
+        <div id='betBar'> Bet:  Δ {{bet_amount}} </h2>
+        {% if not game_case %}
+        <input class='pokerControl' type='submit' value='REDRAW / PLAY HAND'>
+        {% endif %}
     </form>
 
-    
-    <form action="/game_sort" method='POST'>
-        <input type='submit' value='SORT'>
+    {% if not game_case %}
+    <form id='redrawForm' action="/game_sort" method='POST'>
+        <input class='pokerControl' type='submit' value='SORT'>
     </form>
-    <form action="/checkwin" method="POST">
-        <input type='submit' value='CHECKWIN'>
-    </form>
+    {% else %}
     <form action="/bet_game" method="GET">
-        <input type='submit' value='PLAY AGAIN'>
+        <input class='pokerControl' type='submit' value='PLAY AGAIN'>
     </form>
-    {% if game_case %}
-    <p> You've won on a {{game_case}}, your payout is {{payout}}
+    <p class='resultMessage'> It's a {{" ".join(game_case.split('_'))}}, your payout is Δ {{payout}}. Nice! </p>
     {% endif %}
+
+    <table>
+    <tr>
+        <th>Hand</th>
+        <th>Prize</th>
+    </tr>
+    {% for string,payout in prize_items %}
+    <tr>
+        <td>{{string}}</td>
+        <td>{{payout}}</td>
+    </tr>
+    {% endfor %}
+    </table>
+
+
     <script src="{{url_for('static',filename='script.js')}}"></script>
 {% endblock content %}

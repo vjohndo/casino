@@ -15,7 +15,7 @@
         <img id='img{{i}}' class="playingCard" src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png">
     {% endfor %}
 
-    <h2> BET: {{bet_amount}} </h2>
+    <div id='betBar'> Bet:  Δ {{bet_amount}} </div>
     {% if not game_over %}
         {% if not no_hits %}
         <form action="/blackjack_hit" method="POST">

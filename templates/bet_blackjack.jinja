@@ -12,7 +12,7 @@
     <form action="/play_game_blackjack" method="POST">
         <div class="betControls">
             <input class='betInput' type='number' name='bet_value' value='{{ session['bet_amount'] }} min='1' placeholder='Δ'>
-            <input type='submit' name='bet_buttom' value='Place Bet'>
+            <input class='betButton' type='submit' name='bet_buttom' value='Place Bet'>
         </div>
     </form>
     {% if game_case %}

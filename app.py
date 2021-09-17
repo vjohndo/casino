@@ -111,7 +111,7 @@ def play_game_blackjack():
     if game.bet_placed == False:
         
         if not request.form.get('bet_value'):
-            return redirect('/bet_game')
+            return redirect('/bet_game_blackjack')
 
         game.bet_amount = int(request.form.get('bet_value'))
 
@@ -269,6 +269,8 @@ def play_game():
         if not request.form.get('bet_value'):
             return redirect('/bet_game')
 
+        game.bet_amount = int(request.form.get('bet_value'))
+
         if game.bet_amount < 1 or game.bet_amount > player.wallet:
             return redirect('/bet_game')
 
@@ -283,7 +285,8 @@ def play_game():
                     enumerated_hand = enumerate(game.hand), 
                     wallet=player.wallet, 
                     bet_amount=game.bet_amount, 
-                    game_instance = game.game_instance_id
+                    game_instance = game.game_instance_id,
+                    prize_items = game.prize_dict.items()
     )
     
     
@@ -329,7 +332,8 @@ def checkwin():
                         game_case = game.winning_case, 
                         payout = game.payout_amount, 
                         bet_amount=game.bet_amount, 
-                        game_instance = game.game_instance_id
+                        game_instance = game.game_instance_id,
+                        prize_items = game.prize_dict.items()
         )
     else:
         print('Else statement')
@@ -341,7 +345,8 @@ def checkwin():
                         game_case = game.winning_case, 
                         payout = game.payout_amount, 
                         bet_amount=game.bet_amount, 
-                        game_instance = game.game_instance_id
+                        game_instance = game.game_instance_id,
+                        prize_items = game.prize_dict.items()
         )
 
 ### LOGIN ###
