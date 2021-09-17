@@ -1,5 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    background-color: rgb(18, 112, 18);
+    background-image: linear-gradient(rgb(49, 141, 72),rgb(47, 121, 53));
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 100vh;
     color: white;
     margin: 0 auto;
     width: 1000px;
@@ -8,19 +19,68 @@ body {
     transition: margin 1s;
 }
 
-header {
-    background-color: rgb(34, 180, 34);
+a {
+    color: white;
+    text-decoration: none;
 }
 
-#display #dealer_display {
+li {
+    list-style: none;
+    display: inline;
+}
+
+h1 {
+    font-family: 'Pacifico', cursive;
+}
+
+header {
+    padding: 25px 0px 25px 0px;
+    display: flex;
+    flex-direction: column;
+    min-width: 50%;
+    max-width: 75%;
+    margin: 0 auto;
+}
+
+#display_poker {
+    height: 250px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 800px;
+    margin: 0 auto;
+}
+
+#dealer_display {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
     align-items: center;
     height: 500px;
+    max-width: 700px;
 }
 
-img {
+.betButton {
+    margin: 13px 0px 25px 0px;
+    height: 25px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.betControls {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    margin: 0 auto;
+}
+
+.betInput {
+    font-size: 40px;
+    width: 200px;
+    height: 50px;
+}
+
+.playingCard {
     width: 10vmin;
 }
 
@@ -32,10 +92,86 @@ img {
     cursor: pointer;
 }
 
+.gameButton {
+    padding: 15px 0px 15px 0px;
+    border-radius: 10px;
+    width: 49%;
+    font-size: 30px;
+    background-color: rgba(255, 255, 255, 0.534);
+}
+
+.gameButton:hover {
+    cursor: pointer;
+    background-color: rgba(92, 92, 92, 0.63);
+}
+
+.hiddenCard {
+    width: 15%;
+    border-radius: 7px;
+}
+
 #cardString {
     display: none;
 }
 
 input[type="checkbox"] {
     display: none;
+}
+
+#gamesList {
+    padding: 15px 0px 15px 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 56%;
+    margin: 0 auto;
+    font-family: 'Pacifico', cursive;
+    color: black
+}
+
+#home {
+    text-decoration: none;
+    color: rgb(255, 238, 0);
+}
+
+#homeNav {
+    padding: 0px 0px 15px 0px;
+}
+
+#playerBar {
+    padding: 7px 0px 7px 0px;
+    align-items: center;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.349);
+    margin: 0 auto;
+    width: 75%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+#moneyCollect {
+    padding: 14px 0px 14px 0px;
+    background-color: rgb(255, 50, 50);
+    border-radius: 10px;
+    width: 56%;
+    margin: 0 auto;
+    align-items: center;
+}
+
+#moneyCollect:hover{
+    cursor: pointer;
+}
+
+#moneyCollectNot {
+    padding: 14px 0px 14px 0px;
+    background-color: rgba(46, 46, 46, 0.712);
+    border-radius: 10px;
+    width: 56%;
+    margin: 0 auto;
+    align-items: center;
+}
+
+#moneyCollect:hover {
+    cursor: pointer;
 }

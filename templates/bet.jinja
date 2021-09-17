@@ -3,17 +3,16 @@
 
     <h2> Five Card Poker #{{game_instance}}</h2>
 
-    <div id='display'>
+    <div id='display_poker'>
     {% for i in enumerated_hand %} 
-        <img src="{{url_for('static', filename = 'cardbackblack.png')}}">
+        <img class='hiddenCard' src="{{url_for('static', filename = 'cardbackblack.png')}}">
     {% endfor %}
     </div>
 
     <form action="/play_game" method="POST">
-        <input type='text' name='bet_value' value='{{ session['bet_amount'] }}'>
-        <input type='submit' name='bet_buttom' value='Submit Bet'>
+        <div class="betControls">
+            <input class='betInput' type='number' name='bet_value' value='{{ session['bet_amount'] }} min='1' placeholder='Δ'>
+            <input class='betButton' type='submit' name='bet_buttom' value='Place Bet'>
+        </div>
     </form>
-    {% if game_case %}
-    <p> You've won on a {{game_case}}, your payout is {{payout}}
-    {% endif %}
 {% endblock content %}

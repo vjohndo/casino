@@ -1,5 +1,6 @@
 const fiveCardPokerButton = document.querySelector("#fiveCardPokerButton") 
 const blackjackButon = document.querySelector("#blackjackButton")
+const collectDaily = document.querySelector("#moneyCollect")
 
 fiveCardPokerButton.onclick = function() {
     window.location.replace("/bet_game")
@@ -7,4 +8,8 @@ fiveCardPokerButton.onclick = function() {
 
 blackjackButon.onclick = function() {
     window.location.replace("/create_game_blackjack")
+}
+
+collectDaily.onclick = function() {
+    window.location.replace("/collect")
 }

@@ -1,6 +1,8 @@
+from model.dailycheck import moreThanADay
 from model.played_games import any_active_gamedb, create_gamedb, get_pokerID_by_userID, get_blackjackID_by_userID
 from flask import Flask, render_template, request, redirect, session
 from datetime import datetime, timedelta, date
+from model.dailycheck import moreThanADay
 import os
 
 from model.encryption import is_password_correct, hashpw
@@ -21,20 +23,14 @@ app.config['SECRET_KEY'] = SECRET_KEY
 def collect_daily():
     # Get a player class
     player = user_profile_of_id(session.get('user_id'))
-    print(type(player.last_login))
 
-    time_delta = (date.today() - player.last_login).days
-    print(time_delta)
-
-    if time_delta >= 1:
+    if moreThanADay(player):
         player.last_login = date.today()
-        print(player.last_login)
         player.wallet += 100
         update_player(player)
         return redirect('/')
-    
     else:
-        return 'TOO EARLY TO COLLECT'
+        return redirect('/')
 
 # LANDING PAGE
 @app.route('/')
@@ -43,8 +39,13 @@ def index():
         return render_template('index.jinja')
 
     else:
-        user_profile = user_profile_of_id(session.get('user_id'))
-        return render_template('index.jinja', name=user_profile.name, wallet=user_profile.wallet)
+        try:
+            user_profile = user_profile_of_id(session.get('user_id'))
+            can_collect = moreThanADay(user_profile)
+        except:
+            session.clear()
+            return redirect('/login')
+        return render_template('index.jinja', name=user_profile.name, wallet=user_profile.wallet, can_collect=can_collect)
 
 # BLACK JACK
 @app.route('/create_game_blackjack', methods=['GET'])
@@ -108,7 +109,15 @@ def play_game_blackjack():
 
     # update the bet amount if the gmae still hasn't been updated
     if game.bet_placed == False:
+        
+        if not request.form.get('bet_value'):
+            return redirect('/bet_game')
+
         game.bet_amount = int(request.form.get('bet_value'))
+
+        if game.bet_amount < 1 or game.bet_amount > player.wallet:
+            return redirect('/bet_game_blackjack')
+
         player.wallet = player.wallet - game.bet_amount
         update_player(player)
         game.bet_placed = True
@@ -256,7 +265,13 @@ def play_game():
     
     # update the bet amount it has not been updated.
     if game.bet_placed == False:
-        game.bet_amount = int(request.form.get('bet_value'))
+
+        if not request.form.get('bet_value'):
+            return redirect('/bet_game')
+
+        if game.bet_amount < 1 or game.bet_amount > player.wallet:
+            return redirect('/bet_game')
+
         player.wallet = player.wallet - game.bet_amount
         update_player(player)
         game.bet_placed = True

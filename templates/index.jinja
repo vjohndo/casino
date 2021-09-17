@@ -1,6 +1,16 @@
 {% extends "base.jinja" %}
 {% block content %}
-<button id='fiveCardPokerButton'> Five Card Poker </button>
-<button id='blackjackButton'> Blackjack </button>
+
+{% if can_collect %}
+<div id='moneyCollect'> Collect Δ100 </div>
+{% else %}
+<div id='moneyCollectNot'> Collect Δ100 (tomorrow) </div>
+{% endif %}
+
+<div id="gamesList">
+    <div class='gameButton' id='fiveCardPokerButton'> Five Card Poker </div>
+    <div class='gameButton' id='blackjackButton'> Blackjack </div>
+</div>
 <script src="{{url_for('static',filename='index.js')}}"></script>
+
 {% endblock content %}
