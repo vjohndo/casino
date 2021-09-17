@@ -1,9 +1,9 @@
 {% extends "base.jinja" %}
 {% block content %}
 
-    <h2> Five Card Poker #{{game_instance}}</h2>
+    <h2> Blackjack #{{game_instance}}</h2>
 
-    <div id='display'>
+    <div id='display_blackjack'>
     {% for i in enumerated_hand %} 
         <img class='hiddenCard' src="{{url_for('static', filename = 'cardbackblack.png')}}">
     {% endfor %}

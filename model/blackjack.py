@@ -90,29 +90,29 @@ class Blackjack():
         # Check all blackjack conditions
         if self.player_blackjack and self.dealer_blackjack:
             self.payout_amount = self.bet_amount
-            self.winner = 'DRAW'
+            self.winner = 'dealer and house blackjack'
 
         elif self.player_blackjack and not self.dealer_blackjack:
             self.payout_amount = self.bet_amount * 2.5
-            self.winner = 'PLAYER'
+            self.winner = 'player blackjack'
         
         elif not self.player_blackjack and self.dealer_blackjack:
             self.payout_amount = 0
-            self.winner = 'HOUSE'
+            self.winner = 'house blackjack'
 
         # Compare scores
         else:
             if self.player_score == self.dealer_score:
                 self.payout_amount = self.bet_amount
-                self.winner = 'DRAW'
+                self.winner = 'draw'
 
             elif self.player_score > self.dealer_score:
                 self.payout_amount = self.bet_amount * 2
-                self.winner = 'PLAYER'
+                self.winner = 'player wins'
             
             elif self.player_score < self.dealer_score:
                 self.payout_amount = 0
-                self.winner = 'HOUSE'
+                self.winner = 'house wins'
 
 
         # Set game to finished

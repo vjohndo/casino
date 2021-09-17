@@ -24,6 +24,10 @@ a {
     text-decoration: none;
 }
 
+h3 {
+    padding-top: 20px;
+}
+
 li {
     list-style: none;
     display: inline;
@@ -34,7 +38,8 @@ h1 {
 }
 
 table {
-    margin: 0 auto;
+    padding-top: ;
+    margin: 20px auto 20px auto;
     border: solid;
     text-align: left;
 }
@@ -48,7 +53,7 @@ header {
     margin: 0 auto;
 }
 
-#display_poker {
+#display_poker, #display_blackjack {
     height: 250px;
     display: flex;
     flex-direction: row;
@@ -56,6 +61,16 @@ header {
     align-items: center;
     width: 800px;
     margin: 0 auto;
+}
+
+#display_blackjack {
+    justify-content: center;
+}
+
+.users {
+    width: 270px;
+    margin: 0 auto;
+    text-align: left;
 }
 
 #dealer_display {
@@ -68,10 +83,11 @@ header {
 }
 
 .resultMessage {
+    margin-top: 20px;
     font-size: 20px;
 }
 
-.betButton, .pokerControl {
+.betButton, .pokerControl, .blackjackControls {
     margin: 13px 0px 25px 0px;
     height: 25px;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -79,8 +95,8 @@ header {
     color: white;
 }
 
-.pokerControl {
-    margin: 13px 0px 13x 0px;
+.pokerControl, .blackjackControls{
+    margin: 13px 0px 0px 0px;
     width: 20%;
 }
 
@@ -126,6 +142,10 @@ header {
 
 .playingCard:hover {
     cursor: pointer;
+}
+
+.blackjackPadding {
+    margin-bottom: 20px;
 }
 
 #cardString {
