@@ -47,15 +47,17 @@ def index():
         return render_template('index.jinja', name=user_profile.name, wallet=user_profile.wallet)
 
 # BLACK JACK
-@app.route('/create_game_blackjack', methods=['GET','POST'])
+@app.route('/create_game_blackjack', methods=['GET'])
 def create_game_blackjack():
 
     # Get a player class
     player = user_profile_of_id(session.get('user_id'))
 
     # Create an instance of the blackjack game
-    game_init = Blackjack(player.id)
-    create_gamedb(game_init)
+    if not any_active_gamedb(player.id,2):
+            
+        game_init = Blackjack(player.id)
+        create_gamedb(game_init)
 
     # Create an entry of the game in the database
     return redirect('/bet_game_blackjack')
@@ -63,33 +65,37 @@ def create_game_blackjack():
 @app.route('/bet_game_blackjack')
 def blackjack_place_bet():
 
-    # Get the player class
-    player = user_profile_of_id(session.get('user_id'))
+    if session.get('user_id') is not None: 
 
-    # Any active games for this player, including those just created?
-    if any_active_gamedb(player.id,2):
+        # Get the player class
+        player = user_profile_of_id(session.get('user_id'))
+
+        # Any active games for this player, including those just created?
+        if any_active_gamedb(player.id,2):
+            
+            # Load game from player ID
+            game_id = get_blackjackID_by_userID(player.id)
+            session['game_instance_id_blackjack'] = game_id
+            game = read_gamedb(game_id)
+
+            # Of those active games, has bet been placed?
+            if game.bet_placed == True:
+                return redirect('/play_game_blackjack')
+            else:
+                return render_template(
+                                'bet_blackjack.jinja',
+                                name = player.name,
+                                enumerated_hand = enumerate(game.player_hand),
+                                wallet=player.wallet,
+                                game_instance = game.game_instance_id
+                )
         
-        # Load game from player ID
-        game_id = get_blackjackID_by_userID(player.id)
-        session['game_instance_id_blackjack'] = game_id
-        game = read_gamedb(game_id)
-
-        # Of those active games, has bet been placed?
-        if game.bet_placed == True:
-            return redirect('/play_game_blackjack')
+        # No active game
         else:
-            return render_template(
-                            'bet_blackjack.jinja',
-                            name = player.name,
-                            enumerated_hand = enumerate(game.player_hand),
-                            wallet=player.wallet,
-                            game_instance = game.game_instance_id
-            )
-    
-    # No active game
-    else:
-        return redirect('/create_game_blackjack')
+            return redirect('/create_game_blackjack')
 
+    else:
+        return redirect('/login')
 
 @app.route('/play_game_blackjack', methods=['POST','GET'])
 def play_game_blackjack():
@@ -105,7 +111,6 @@ def play_game_blackjack():
         game.bet_amount = int(request.form.get('bet_value'))
         player.wallet = player.wallet - game.bet_amount
         update_player(player)
-        session['placed_bet_blackjack'] = True
         game.bet_placed = True
         update_gamedb(game)
     
@@ -132,7 +137,6 @@ def blackjack_hit():
     game = read_gamedb(game_id)
     game.hit()
     update_gamedb(game)
-    session['game_instance_id_blackjack'] = game_id
     return redirect('/play_game_blackjack')
 
 @app.route('/blackjack_stay', methods=['POST'])
@@ -142,7 +146,6 @@ def blackjack_stay():
     game = read_gamedb(game_id)
     game.dealer_plays()
     update_gamedb(game)
-    session['game_instance_id_blackjack'] = game_id
     return redirect('/checkwin_blackjack')
 
 
@@ -151,38 +154,53 @@ def checkwin_blackjack():
     player = user_profile_of_id(session.get('user_id'))
     game_id = session.get('game_instance_id_blackjack')
     game = read_gamedb(game_id)
-    game.results()
-    player.wallet = player.wallet + game.payout_amount
-    update_gamedb(game)
-    update_player(player)
     no_hits = False
 
-    return render_template(
-                    "play_game_blackjack.jinja", 
-                    game=game , 
-                    game_over = game.is_over, 
-                    no_hits = no_hits, name = player.name, 
-                    dealer_hand = enumerate(game.dealer_hand), 
-                    enumerated_hand = enumerate(game.player_hand), 
-                    wallet=player.wallet, bet_amount=game.bet_amount, 
-                    game_instance = game.game_instance_id
-    )
+    if game.is_over:
+        return render_template(
+                        "play_game_blackjack.jinja", 
+                        game=game , 
+                        game_over = game.is_over, 
+                        no_hits = no_hits, name = player.name, 
+                        dealer_hand = enumerate(game.dealer_hand), 
+                        enumerated_hand = enumerate(game.player_hand), 
+                        wallet=player.wallet, bet_amount=game.bet_amount, 
+                        game_instance = game.game_instance_id
+        )
+
+    else:
+        player.wallet = player.wallet + game.payout_amount
+        game.results()
+        update_gamedb(game)
+        update_player(player)
+
+        return render_template(
+                        "play_game_blackjack.jinja", 
+                        game=game , 
+                        game_over = game.is_over, 
+                        no_hits = no_hits, name = player.name, 
+                        dealer_hand = enumerate(game.dealer_hand), 
+                        enumerated_hand = enumerate(game.player_hand), 
+                        wallet=player.wallet, bet_amount=game.bet_amount, 
+                        game_instance = game.game_instance_id
+        )
+
 
 # FIVE CARD POKER
-@app.route('/create_game', methods=['GET','POST'])
+@app.route('/create_game', methods=['GET'])
 def create_game():
     if session.get('user_id') is not None: 
 
         # Get a player class
         player = user_profile_of_id(session.get('user_id'))
         
-        # Create an instance of the game 
-        game_init = Five_Card_Draw(player.id)
+        # Create ab instance of the game only is not other active game.
+        if not any_active_gamedb(player.id,1):
+            
+            # Create an instance of the game 
+            game_init = Five_Card_Draw(player.id)
+            create_gamedb(game_init)
 
-        # Create an entry of the game in the database
-        create_gamedb(game_init)
-        session['placed_bet'] = False
-        session['game_over'] = False
         return redirect("/bet_game")
 
     else:
@@ -194,29 +212,34 @@ def poker_place_bet():
 
     if session.get('user_id') is not None: 
 
-        # If the player has already placed bet, route to game
-        if not session.get('placed_bet'):
-
             # Get a player class
             player = user_profile_of_id(session.get('user_id'))    
-            # Check if there are any active games
+
+            # Check if there are any active games, that are not finished
             if any_active_gamedb(player.id, 1):
 
                 # Open up that game we just created
                 game_id = get_pokerID_by_userID(player.id)
                 session['game_instance_id'] = game_id
                 game = read_gamedb(game_id)
-                print(game.bet_placed)
-
-
-                if game.bet_placed == True and game.is_over == False:
+                
+                # If that active game has had its bet placed, direct to play games
+                if game.bet_placed == True:
                     return redirect('/play_game')
+                
+                # Otherwise we've not yet placed bet
                 else:
-                    return render_template('bet.jinja', name = player.name, enumerated_hand = enumerate(game.hand), wallet=player.wallet, game_instance = game.game_instance_id)
+                    return render_template(
+                                'bet.jinja',
+                                name = player.name,
+                                enumerated_hand = enumerate(game.hand), 
+                                wallet=player.wallet, 
+                                game_instance = game.game_instance_id
+                    )
+            
+            # No active game? then create one.
             else:
                 return redirect('/create_game')
-        else:
-            return redirect('/create_game')
         
     else:
         return redirect('/login')
@@ -225,46 +248,40 @@ def poker_place_bet():
 @app.route('/play_game', methods=['POST','GET'])
 def play_game():
 
-    # Get a player class
+    # Open up the game
     player = user_profile_of_id(session.get('user_id'))
+    game_id = get_pokerID_by_userID(player.id)
+    session['game_instance_id'] = game_id
+    game = read_gamedb(game_id)
     
-    # Check if there are any active games
-    # At this stage the player has already placed a bet
-    if any_active_gamedb(player.id,1):
+    # update the bet amount it has not been updated.
+    if game.bet_placed == False:
+        game.bet_amount = int(request.form.get('bet_value'))
+        player.wallet = player.wallet - game.bet_amount
+        update_player(player)
+        game.bet_placed = True
+        update_gamedb(game)
         
-        # open up the game
-        game_id = get_pokerID_by_userID(player.id)
-        session['game_instance_id'] = game_id
-        game = read_gamedb(game_id)
-
-        # update the bet amount
-        if game.bet_placed == False:
-            game.bet_amount = int(request.form.get('bet_value'))
-            player.wallet = player.wallet - game.bet_amount
-            update_player(player)
-            session['placed_bet'] = True
-            game.bet_placed = True
-            update_gamedb(game)
-        
-        print(game.bet_placed)
-        return render_template("play_game.jinja", name = player.name, enumerated_hand = enumerate(game.hand), wallet=player.wallet, bet_amount=game.bet_amount, game_instance = game.game_instance_id)
+    return render_template(
+                    "play_game.jinja", 
+                    name = player.name, 
+                    enumerated_hand = enumerate(game.hand), 
+                    wallet=player.wallet, 
+                    bet_amount=game.bet_amount, 
+                    game_instance = game.game_instance_id
+    )
     
-    else:
-        return redirect('/create_game')
     
-
 @app.route('/game_redraw', methods = ['POST'])
 def action():
 
     game_id = session.get('game_instance_id')
     game = read_gamedb(game_id)
     form_request = list(request.form)
-    print(form_request)
     if form_request:
         game.redraw(form_request)
-        game.bet_placed = True
         update_gamedb(game)
-    return redirect('/play_game')
+    return redirect('/checkwin')
 
 @app.route('/game_sort', methods = ['POST'])
 def sort():
@@ -272,32 +289,45 @@ def sort():
     game_id = session.get('game_instance_id')
     game = read_gamedb(game_id)
     game.hand_sort()
-    game.bet_placed = True
     update_gamedb(game)
-
     return redirect('/play_game')
 
-@app.route('/checkwin', methods = ['POST'])
+@app.route('/checkwin', methods = ['POST','GET'])
 def checkwin():
     # Get a player class
     player = user_profile_of_id(session.get('user_id'))
     game_id = session.get('game_instance_id')
     game = read_gamedb(game_id)
+    print('GAME IS OVER?', game.is_over)
 
-    if not game.is_over:
-        result_tuple = game.payout()
-        player.wallet = player.wallet + result_tuple[1]
+    if game.is_over == False:
+        print('if statement')
+        game.payout()
+        player.wallet = player.wallet + game.payout_amount
         update_player(player)
-        game.is_over = True
-        # need to ensure the game is only checked once
         update_gamedb(game)
-
-        session['game_over'] = True
-
-        return render_template('play_game.jinja',name = player.name, wallet=player.wallet, enumerated_hand = enumerate(game.hand), game_case = result_tuple[0], payout = result_tuple[1], bet_amount=game.bet_amount, game_instance = game.game_instance_id)
-    else: 
-        return redirect('/')
-
+        return render_template(
+                        'play_game.jinja',
+                        name = player.name, 
+                        wallet=player.wallet, 
+                        enumerated_hand = enumerate(game.hand), 
+                        game_case = game.winning_case, 
+                        payout = game.payout_amount, 
+                        bet_amount=game.bet_amount, 
+                        game_instance = game.game_instance_id
+        )
+    else:
+        print('Else statement')
+        return render_template(
+                        'play_game.jinja',
+                        name = player.name, 
+                        wallet=player.wallet, 
+                        enumerated_hand = enumerate(game.hand), 
+                        game_case = game.winning_case, 
+                        payout = game.payout_amount, 
+                        bet_amount=game.bet_amount, 
+                        game_instance = game.game_instance_id
+        )
 
 ### LOGIN ###
 @app.route("/login")

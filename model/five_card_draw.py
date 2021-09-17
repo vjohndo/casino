@@ -10,6 +10,7 @@ class Five_Card_Draw():
         self.game_instance_id = None
         self.is_over = False
         self.game_mode_id = 1
+        self.winning_case = None
         self.payout_amount = None
         self.player_id = player_id
         self.bet_amount = 0
@@ -132,11 +133,9 @@ class Five_Card_Draw():
     # Determines payout
     def payout(self):
         win_table = self.any_wins()
-        winning_string = [string for string in win_table.keys() if win_table[string]]
-        self.payout_amount = self.prize_dict[winning_string[0]]*self.bet_amount
+        self.winning_case = [string for string in win_table.keys() if win_table[string]][0]
+        self.payout_amount = self.prize_dict[self.winning_case]*self.bet_amount
         self.is_over = True
-        return (winning_string[0],self.prize_dict[winning_string[0]]*self.bet_amount)
-
 
 def main_test():
     game = Five_Card_Draw(test_player,100)
