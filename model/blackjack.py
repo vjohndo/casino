@@ -78,7 +78,7 @@ class Blackjack():
 
     def dealer_plays(self):
         
-        while self.dealer_score < 17 and not self.dealer_bust:
+        while self.dealer_score < 17 and not self.dealer_bust and not self.player_bust:
             self.takes()
             self.score_dealer_hand()
 
