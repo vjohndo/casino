@@ -243,7 +243,8 @@ def poker_place_bet():
                                 name = player.name,
                                 enumerated_hand = enumerate(game.hand), 
                                 wallet=player.wallet, 
-                                game_instance = game.game_instance_id
+                                game_instance = game.game_instance_id,
+                                prize_items = game.prize_dict.items()
                     )
             
             # No active game? then create one.

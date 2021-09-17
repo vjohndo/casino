@@ -13,7 +13,7 @@ body {
     min-height: 100vh;
     color: white;
     margin: 0 auto;
-    width: 1000px;
+    width: 800px;
     text-align: center;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     transition: margin 1s;
@@ -26,6 +26,10 @@ a {
 
 h3 {
     padding-top: 20px;
+}
+
+h1 {
+    font-size: 50px;
 }
 
 li {
@@ -64,6 +68,10 @@ header {
 
 #display_blackjack {
     justify-content: center;
+}
+
+.hiddenGap {
+    width: 10px;
 }
 
 .users {

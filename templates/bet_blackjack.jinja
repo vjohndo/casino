@@ -4,13 +4,16 @@
     <h2> Blackjack #{{game_instance}}</h2>
 
     <div id='display_blackjack'>
+        <div class="hiddenGap"></div>
     {% for i in enumerated_hand %} 
         <img class='hiddenCard' src="{{url_for('static', filename = 'cardbackblack.png')}}">
+        <div class="hiddenGap"></div>
     {% endfor %}
     </div>
 
     <form action="/play_game_blackjack" method="POST">
         <div class="betControls">
+            Bet Amount
             <input class='betInput' type='number' name='bet_value' value='{{ session['bet_amount'] }} min='1' placeholder='Δ'>
             <input class='betButton' type='submit' name='bet_buttom' value='Place Bet'>
         </div>

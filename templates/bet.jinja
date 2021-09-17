@@ -11,8 +11,22 @@
 
     <form action="/play_game" method="POST">
         <div class="betControls">
+            Bet Amount
             <input class='betInput' type='number' name='bet_value' value='{{ session['bet_amount'] }} min='1' placeholder='Δ'>
             <input class='betButton' type='submit' name='bet_buttom' value='Place Bet'>
         </div>
     </form>
+
+    <table>
+    <tr>
+        <th>Hand</th>
+        <th>Prize</th>
+    </tr>
+    {% for string,payout in prize_items %}
+    <tr>
+        <td>{{string}}</td>
+        <td>{{payout}}</td>
+    </tr>
+    {% endfor %}
+    </table>
 {% endblock content %}
