@@ -63,19 +63,33 @@ def create_game_blackjack():
 @app.route('/bet_game_blackjack')
 def blackjack_place_bet():
 
-    # Open up that game we just created
+    # Get the player class
     player = user_profile_of_id(session.get('user_id'))
-    game_id = get_blackjackID_by_userID(player.id)
-    session['game_instance_id_blackjack'] = game_id
-    game = read_gamedb(game_id)
+
+    # Any active games for this player, including those just created?
+    if any_active_gamedb(player.id,2):
+        
+        # Load game from player ID
+        game_id = get_blackjackID_by_userID(player.id)
+        session['game_instance_id_blackjack'] = game_id
+        game = read_gamedb(game_id)
+
+        # Of those active games, has bet been placed?
+        if game.bet_placed == True:
+            return redirect('/play_game_blackjack')
+        else:
+            return render_template(
+                            'bet_blackjack.jinja',
+                            name = player.name,
+                            enumerated_hand = enumerate(game.player_hand),
+                            wallet=player.wallet,
+                            game_instance = game.game_instance_id
+            )
     
-    return render_template(
-                    'bet_blackjack.jinja',
-                    name = player.name,
-                    enumerated_hand = enumerate(game.player_hand),
-                    wallet=player.wallet,
-                    game_instance = game.game_instance_id
-    )
+    # No active game
+    else:
+        return redirect('/create_game_blackjack')
+
 
 @app.route('/play_game_blackjack', methods=['POST','GET'])
 def play_game_blackjack():
@@ -86,7 +100,7 @@ def play_game_blackjack():
     session['game_instance_id_blackjack'] = game_id
     game = read_gamedb(game_id)
 
-    # update the bet amount
+    # update the bet amount if the gmae still hasn't been updated
     if game.bet_placed == False:
         game.bet_amount = int(request.form.get('bet_value'))
         player.wallet = player.wallet - game.bet_amount
@@ -96,7 +110,6 @@ def play_game_blackjack():
         update_gamedb(game)
     
     no_hits = False
-
 
     if game.player_bust == True or game.player_blackjack == True:
         no_hits = True 
@@ -113,23 +126,23 @@ def play_game_blackjack():
     )
 
 
-@app.route('/blackjack_hit', methods=['POST','GET'])
+@app.route('/blackjack_hit', methods=['POST'])
 def blackjack_hit():
     game_id = session.get('game_instance_id_blackjack')
     game = read_gamedb(game_id)
     game.hit()
     update_gamedb(game)
-
+    session['game_instance_id_blackjack'] = game_id
     return redirect('/play_game_blackjack')
 
-@app.route('/blackjack_stay', methods=['POST','GET'])
+@app.route('/blackjack_stay', methods=['POST'])
 def blackjack_stay():
 
     game_id = session.get('game_instance_id_blackjack')
     game = read_gamedb(game_id)
     game.dealer_plays()
     update_gamedb(game)
-
+    session['game_instance_id_blackjack'] = game_id
     return redirect('/checkwin_blackjack')
 
 
@@ -139,7 +152,7 @@ def checkwin_blackjack():
     game_id = session.get('game_instance_id_blackjack')
     game = read_gamedb(game_id)
     game.results()
-    player.wallet += game.payout_amount
+    player.wallet = player.wallet + game.payout_amount
     update_gamedb(game)
     update_player(player)
     no_hits = False
@@ -158,18 +171,22 @@ def checkwin_blackjack():
 # FIVE CARD POKER
 @app.route('/create_game', methods=['GET','POST'])
 def create_game():
+    if session.get('user_id') is not None: 
 
-    # Get a player class
-    player = user_profile_of_id(session.get('user_id'))
-    
-    # Create an instance of the game 
-    game_init = Five_Card_Draw(player.id)
+        # Get a player class
+        player = user_profile_of_id(session.get('user_id'))
+        
+        # Create an instance of the game 
+        game_init = Five_Card_Draw(player.id)
 
-    # Create an entry of the game in the database
-    create_gamedb(game_init)
-    session['placed_bet'] = False
-    session['game_over'] = False
-    return redirect("/bet_game")
+        # Create an entry of the game in the database
+        create_gamedb(game_init)
+        session['placed_bet'] = False
+        session['game_over'] = False
+        return redirect("/bet_game")
+
+    else:
+        return redirect('/login')
 
 # BET # THIS IS THE PROBLEM ONE. 
 @app.route('/bet_game')
