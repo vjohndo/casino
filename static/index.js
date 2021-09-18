@@ -1,3 +1,4 @@
+// This script adds in functionality to collect reroute buttons
 const fiveCardPokerButton = document.querySelector("#fiveCardPokerButton") 
 const blackjackButon = document.querySelector("#blackjackButton")
 const collectDaily = document.querySelector("#moneyCollect")

@@ -1,3 +1,4 @@
+// This script checks hidden checkboxes when a card is selected
 const selectedCard = (event) => {
     event.target.classList.toggle('selected')
     const cardID = event.target.id
