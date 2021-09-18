@@ -1,4 +1,6 @@
--- Users
+-- Users Table Generation Code
+DROP TABLE users;
+
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name TEXT,
@@ -12,8 +14,9 @@ CREATE TABLE users (
 INSERT INTO users (name, email, password_hash, wallet, is_admin) VALUES ('john', 'john@email.com', 'password_hash', 1000, TRUE);
 INSERT INTO users (name, email, password_hash, wallet, is_admin) VALUES ('testperson', 'testperson@email.com', 'password_hash', 1000, FALSE);
 
--- Played_games.. need a better name than this. 
--- NEED TO DEFINE CONSTRAINTS
+-- Game Instances Table Generation Code
+DROP TABLE game_instances;
+
 CREATE TABLE game_instances (
     id SERIAL PRIMARY KEY,
     user_id INTEGER,
@@ -27,7 +30,7 @@ CREATE TABLE game_instances (
 );
 
 
--- Game_types
+-- Game Instance Generation Code
 CREATE TABLE game_modes (
     id SERIAL PRIMARY KEY,
     name TEXT
@@ -36,6 +39,8 @@ CREATE TABLE game_modes (
 INSERT INTO game_modes (name) VALUES ('five_card_poker');
 INSERT INTO game_modes (name) VALUES ('blackjack');
 
+
+-- Tables for future expansion
 -- -- Vault
 -- CREATE TABLE vault (
 --     id SERIAL PRIMARY KEY,
