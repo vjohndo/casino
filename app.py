@@ -3,36 +3,21 @@ from model.played_games import any_active_gamedb, create_gamedb, get_pokerID_by_
 from flask import Flask, render_template, request, redirect, session
 from datetime import datetime, timedelta, date
 from model.dailycheck import moreThanADay
-import os
-
 from model.encryption import is_password_correct, hashpw
 from model.five_card_draw import Five_Card_Draw
 from model.blackjack import Blackjack
 from model.user import user_exists_of_email, user_profile_of_id, user_profile_of_email, add_user, update_player
 from model.played_games import create_gamedb, read_gamedb, update_gamedb
-
-
+import os
 
 SECRET_KEY = os.environ.get("SECRET_KEY", 'ThisKeyTesting')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 
-# Money Collection
-@app.route('/collect')
-def collect_daily():
-    # Get a player class
-    player = user_profile_of_id(session.get('user_id'))
-
-    if moreThanADay(player):
-        player.last_login = date.today()
-        player.wallet += 100
-        update_player(player)
-        return redirect('/')
-    else:
-        return redirect('/')
-
-# LANDING PAGE
+"""
+INDEX PAGE
+"""
 @app.route('/')
 def index():
     if session.get('user_id') is None: 
@@ -47,7 +32,26 @@ def index():
             return redirect('/login')
         return render_template('index.jinja', name=user_profile.name, wallet=user_profile.wallet, can_collect=can_collect)
 
-# BLACK JACK
+"""
+COLLECT MONEY ACTION
+"""
+@app.route('/collect')
+def collect_daily():
+
+    player = user_profile_of_id(session.get('user_id'))
+
+    if moreThanADay(player):
+        player.last_login = date.today()
+        player.wallet += 100
+        update_player(player)
+        return redirect('/')
+    else:
+        return redirect('/')
+
+"""
+BLACKJACK ROUTES
+"""
+# Game creation, blackjack
 @app.route('/create_game_blackjack', methods=['GET'])
 def create_game_blackjack():
 
@@ -63,6 +67,7 @@ def create_game_blackjack():
     # Create an entry of the game in the database
     return redirect('/bet_game_blackjack')
 
+# Game creation, blackjack
 @app.route('/bet_game_blackjack')
 def blackjack_place_bet():
 
@@ -195,7 +200,9 @@ def checkwin_blackjack():
         )
 
 
-# FIVE CARD POKER
+"""
+POKER ROUTES
+"""
 @app.route('/create_game', methods=['GET'])
 def create_game():
     if session.get('user_id') is not None: 
@@ -350,6 +357,9 @@ def checkwin():
                         prize_items = game.prize_dict.items()
         )
 
+"""
+LOGIN & SIGNUP ROUTES
+"""
 ### LOGIN ###
 @app.route("/login")
 def login():
