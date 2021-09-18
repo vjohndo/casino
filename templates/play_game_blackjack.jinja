@@ -2,7 +2,7 @@
 {% block content %}
 <h2> Blackjack #{{game_instance}} <h2>
 
-    <h3> Dealer's Hand: </h3>
+    <h3> Dealer's Hand (Stands on 17+): </h3>
     <div id='dealerDisplay'> 
         {% if game_over %}
             {% for i, card_str in dealer_hand %} 
