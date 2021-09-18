@@ -54,18 +54,22 @@ BLACKJACK ROUTES
 # Game creation, blackjack
 @app.route('/create_game_blackjack', methods=['GET'])
 def create_game_blackjack():
+    if session.get('user_id') is not None: 
 
-    # Get a player class
-    player = user_profile_of_id(session.get('user_id'))
+        # Get a player class
+        player = user_profile_of_id(session.get('user_id'))
 
-    # Create an instance of the blackjack game
-    if not any_active_gamedb(player.id,2):
-            
-        game_init = Blackjack(player.id)
-        create_gamedb(game_init)
+        # Create an instance of the blackjack game
+        if not any_active_gamedb(player.id,2):
+                
+            game_init = Blackjack(player.id)
+            create_gamedb(game_init)
 
-    # Create an entry of the game in the database
-    return redirect('/bet_game_blackjack')
+        # Create an entry of the game in the database
+        return redirect('/bet_game_blackjack')
+
+    else:
+        return redirect('/login')
 
 # Game creation, blackjack
 @app.route('/bet_game_blackjack')
