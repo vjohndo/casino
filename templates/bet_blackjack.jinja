@@ -6,7 +6,7 @@
     <div id='display_blackjack'>
         <div class="hiddenGap"></div>
     {% for i in enumerated_hand %} 
-        <img class='hiddenCard' src="{{url_for('static', filename = 'cardbackblack.png')}}">
+        <img class='hiddenCard' src="{{url_for('static', filename = 'cardbackblack.png')}}" alt='Facedown Card'>
         <div class="hiddenGap"></div>
     {% endfor %}
     </div>

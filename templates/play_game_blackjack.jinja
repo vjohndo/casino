@@ -1,19 +1,20 @@
 {% extends "base.jinja" %}
 {% block content %}
-<h2> Blackjack #{{game_instance}} <h2>
+    <h2> Blackjack #{{game_instance}} </h2>
+    <h5> Dealer stands on 17+ </h5>
 
-    <h3> Dealer's Hand (Stands on 17+): </h3>
+    <h3> Dealer's Hand </h3>
     <div id='dealerDisplay'> 
         {% if game_over %}
             {% for i, card_str in dealer_hand %} 
-                <img class="playingCard" id='dealerImg{{i}}' src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png">
+                <img class="playingCard" id='dealerImg{{i}}' src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png" alt='{{card_str}}'>
             {% endfor %}
         {% else %}
             {% for i, card_str in dealer_hand %}
                 {% if i == 0 %}
-                    <img class="playingCard" id='dealerImg{{i}}' src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png">
+                    <img class="playingCard" id='dealerImg{{i}}' src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png" alt='{{card_str}}'>
                 {% else %}
-                    <img class='hiddenCard' src="{{url_for('static', filename = 'cardbackblack.png')}}">
+                    <img class='hiddenCard' src="{{url_for('static', filename = 'cardbackblack.png')}}" alt='Facedown Card'>
                 {% endif %} 
             {% endfor %}
         {% endif %}
@@ -23,7 +24,7 @@
     <div id='display' class='blackjackPadding'>
     {% for i, card_str in enumerated_hand %} 
         <p id='cardString'> {{card_str}} <input id='checkbox{{i}}' type="checkbox" name={{i}} ></p>
-        <img id='img{{i}}' class="playingCard" src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png">
+        <img id='img{{i}}' class="playingCard" src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png" alt='{{card_str}}'>
     {% endfor %}
     </div>
 

@@ -9,30 +9,32 @@
 </head>
 <body>
     <header>
-    <h1><a id='home' href='/'>Golden Century Casino </a></h1>
-    <nav>
-        <ul id='homeNav'>
-            {% if name %}
-            <li><a href="/logout">Logout</a></li>
-            {% else %}
-            <li><a href="/login">Login</a></li>
-            <li><a href="/signup">Signup</a></li>
-            {% endif %}
-        </ul>
-    </nav>
-    <div id='playerBar'>
-    {% if name %}
-        <p> 👤 {{name}} </p>
-        <p> Wallet:  Δ {{wallet}} </p>
-    {% else %}
-        <p> Login and collect your dialy bonus!</p>
-    {% endif %}
-    </div>
+        <h1>
+            <a id='home' href='/'>Golden Century Casino </a>
+        </h1>
+        <nav>
+            <ul id='homeNav'>
+                {% if name %}
+                <li><a href="/logout">Logout</a></li>
+                {% else %}
+                <li><a href="/login">Login</a></li>
+                <li><a href="/signup">Signup</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        <div id='playerBar'>
+        {% if name %}
+            <p> 👤 {{name}} </p>
+            <p> Wallet:  Δ {{wallet}} </p>
+        {% else %}
+            <p> Login and collect your dialy bonus!</p>
+        {% endif %}
+        </div>
     </header>
 
     <main>
-    {% block content %}
-    {% endblock content %}
+        {% block content %}
+        {% endblock content %}
     </main>
 </body>
 </html>

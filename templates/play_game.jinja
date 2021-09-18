@@ -1,15 +1,17 @@
 {% extends "base.jinja" %}
 {% block content %}
-<h2> Five Card Poker #{{game_instance}} <h2>
+    <h2> Five Card Poker #{{game_instance}} </h2>
+    <h5> Instructions: Click on cards to redraw to get a winning hand! </h5>
+    
 
     <form action="/game_redraw" method='POST' >
         <div id='display_poker'>
         {% for i, card_str in enumerated_hand %} 
             <p id='cardString'> {{card_str}} <input id='checkbox{{i}}' type="checkbox" name={{i}} ></p>
-            <img id='img{{i}}' class="playingCard" src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png">
+            <img id='img{{i}}' class="playingCard" src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png" alt='{{card_str}}'>
         {% endfor %}
         </div>
-        <div id='betBar'> Bet:  Δ {{bet_amount}} </h2>
+        <div id='betBar'> Bet:  Δ {{bet_amount}} </div>
         {% if not game_case %}
         <input class='pokerControl' type='submit' value='REDRAW / PLAY HAND'>
         {% endif %}
@@ -27,18 +29,17 @@
     {% endif %}
 
     <table>
-    <tr>
-        <th>Hand</th>
-        <th>Prize</th>
-    </tr>
-    {% for string,payout in prize_items %}
-    <tr>
-        <td>{{string}}</td>
-        <td>{{payout}}</td>
-    </tr>
-    {% endfor %}
+        <tr>
+            <th>Hand</th>
+            <th>Prize</th>
+        </tr>
+        {% for string,payout in prize_items %}
+        <tr>
+            <td>{{string}}</td>
+            <td>{{payout}}</td>
+        </tr>
+        {% endfor %}
     </table>
-
 
     <script src="{{url_for('static',filename='script.js')}}"></script>
 {% endblock content %}
