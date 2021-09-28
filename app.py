@@ -187,8 +187,8 @@ def checkwin_blackjack():
         )
 
     else:
-        player.wallet = player.wallet + game.payout_amount
         game.results()
+        player.wallet = player.wallet + game.payout_amount
         update_gamedb(game)
         update_player(player)
 
