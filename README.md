@@ -1,6 +1,13 @@
 # Casino
 This markdown outlines the technologies, approach taken, user instruction and unsolved problems of this tic-tac-toe simulator.
 
+# To-do's
+- Put commands in for the instructions below
+- Udpate the postgreSQL db 
+- Combine the player and user models into a single module and with the class, call the methods
+- regarding the game states, any change in the database should involve a post, don't allow get methyod
+
+
 ## Techonologies used
 ---
 ### Python
