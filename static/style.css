@@ -45,6 +45,7 @@ table {
     margin: 20px auto 20px auto;
     border: solid;
     text-align: left;
+    font-size: 10px;
 }
 
 header {
@@ -132,6 +133,20 @@ header {
     margin-bottom: 20px;
 }
 
+.instructionLi {
+    list-style-type: circle;
+    display: block;
+    text-align: left;
+}
+
+.instructionUl {
+    margin-top: 20px;
+}
+
+.bold {
+    font-weight: 700;
+    color: yellow;
+}
 
 input[type="checkbox"] {
     display: none;
@@ -146,6 +161,17 @@ input[type="checkbox"] {
     margin: 0 auto;
     font-family: 'Pacifico', cursive;
     color: black
+}
+
+#noMarginTable {
+    margin-top: 0px;
+}
+
+#fiveCardInstructions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
 }
 
 #display_poker, #display_blackjack {

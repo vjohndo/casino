@@ -2,6 +2,7 @@
 {% block content %}
 
     <h2> Blackjack #{{game_instance}}</h2>
+    <h5> Dealer stands on 17+ </h5>
 
     <div id='display_blackjack'>
         <div class="hiddenGap"></div>
@@ -14,11 +15,34 @@
     <form action="/play_game_blackjack" method="POST">
         <div class="betControls">
             Bet Amount
-            <input class='betInput' type='number' name='bet_value' value='{{ session['bet_amount'] }} min='1' placeholder='Δ'>
+            <input class='betInput' type='number' name='bet_value' value='{{ session['bet_amount'] }} min='1' placeholder='$'>
             <input class='betButton' type='submit' name='bet_buttom' value='Place Bet'>
         </div>
+        <p>Check your wallet. Gamble responsibly.</p>
     </form>
     {% if game_case %}
     <p> You've won on a {{game_case}}, your payout is {{payout}}
     {% endif %}
+        <div id='fiveCardInstructions'>
+        <ul class='instructionUl'>
+            <li class='instructionLi'>INSTRUCTIONS:</li>
+            <li class='instructionLi'>Standards Poker Rules. Dealer stands on 17+.</li>
+            <li class='instructionLi bold'>Player will be paid out on a winning hand. See table across.</li>
+        </ul>
+        <div>
+            <div class='instructionUl'>PAYOUT:</div>
+            <table id='noMarginTable'>
+                <tr>
+                    <th>Combination</th>
+                    <th>Prize</th>
+                </tr>
+                {% for string,payout in [("win", 2), ("draw", 1), ("lose", 0)] %}
+                <tr>
+                    <td>{{string}}</td>
+                    <td>{{payout}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 {% endblock content %}

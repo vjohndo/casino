@@ -2,13 +2,15 @@
 {% block content %}
 
 {% if can_collect %}
-<div id='moneyCollect'> Collect Δ100 </div>
+<div id='moneyCollect'> Collect $100 </div>
 {% else %}
-<div id='moneyCollectNot'> Collect Δ100 (not ready yet!) </div>
+<div id='moneyCollectNot'> Collect $100 (not ready to collect) </div>
 {% endif %}
 
+<br><br><div> Select from one of our games below: </div> 
+
 <div id="gamesList">
-    <div class='gameButton' id='fiveCardPokerButton'> Five Card Poker </div>
+    <div class='gameButton' id='fiveCardPokerButton'> Five Card Draw </div>
     <div class='gameButton' id='blackjackButton'> Blackjack </div>
 </div>
 <script src="{{url_for('static',filename='index.js')}}"></script>

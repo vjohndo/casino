@@ -11,6 +11,8 @@ blackjackButon.onclick = function() {
     window.location.replace("/create_game_blackjack")
 }
 
-collectDaily.onclick = function() {
-    window.location.replace("/collect")
+if (collectDaily) {
+    collectDaily.onclick = function() {
+        window.location.replace("/collect")
+    }
 }

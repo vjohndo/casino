@@ -1,7 +1,7 @@
 {% extends "base.jinja" %}
 {% block content %}
-    <h2> Five Card Poker #{{game_instance}} </h2>
-    <h5> Instructions: Click on cards to redraw to get a winning hand! </h5>
+    <h2> Five Card Draw #{{game_instance}} </h2>
+    <h5> Instructions: Click on cards and redraw to get a winning hand! </h5>
     
 
     <form action="/game_redraw" method='POST' >
@@ -11,7 +11,7 @@
             <img id='img{{i}}' class="playingCard" src="https://deckofcardsapi.com/static/img/{{card_str[-2:]}}.png" alt='{{card_str}}'>
         {% endfor %}
         </div>
-        <div id='betBar'> Bet:  Δ {{bet_amount}} </div>
+        <div id='betBar'> Bet:  $ {{bet_amount}} </div>
         {% if not game_case %}
         <input class='pokerControl' type='submit' value='REDRAW / PLAY HAND'>
         {% endif %}
@@ -25,7 +25,7 @@
     <form action="/bet_game" method="GET">
         <input class='pokerControl' type='submit' value='PLAY AGAIN'>
     </form>
-    <p class='resultMessage'> It's a {{" ".join(game_case.split('_'))}}, your payout is Δ {{payout}}. Nice! </p>
+    <p class='resultMessage'> It's a {{" ".join(game_case.split('_'))}} combination, your payout is $ {{payout}}. Nice! </p>
     {% endif %}
 
     <table>

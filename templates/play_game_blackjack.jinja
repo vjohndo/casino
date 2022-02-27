@@ -28,7 +28,7 @@
     {% endfor %}
     </div>
 
-    <div id='betBar'> Bet:  Δ {{bet_amount}} </div>
+    <div id='betBar'> Bet:  $ {{bet_amount}} </div>
     {% if not game_over %}
         {% if not no_hits %}
         <form action="/blackjack_hit" method="POST">
@@ -42,6 +42,6 @@
         <form action="/bet_game_blackjack" method="GET">
             <input class='blackjackControls' type='submit' value='PLAY AGAIN'>
         </form>
-        <p class='resultMessage'> It's {{game.winner}}. Your payout is {{game.payout_amount}}. Play again! </p>
+        <p class='resultMessage'> Looks like {{game.winner}}. Your payout is {{game.payout_amount}}. Play again! </p>
     {% endif %}
 {% endblock content %}

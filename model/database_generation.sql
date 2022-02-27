@@ -11,8 +11,8 @@ CREATE TABLE users (
     last_login DATE
 );
 
-INSERT INTO users (name, email, password_hash, wallet, is_admin) VALUES ('john', 'john@email.com', 'password_hash', 1000, TRUE);
-INSERT INTO users (name, email, password_hash, wallet, is_admin) VALUES ('testperson', 'testperson@email.com', 'password_hash', 1000, FALSE);
+-- Password is password_hash
+INSERT INTO users (name, email, password_hash, wallet, is_admin) VALUES ('john', 'john@email.com', '$2b$12$7EtmDXgelc5YzS4xQc8mH.QrOhKxK.BXwCZQxCFAu.wiJbpQ6mGy6', 1000, TRUE);
 
 -- Game Instances Table Generation Code
 DROP TABLE game_instances;
@@ -34,7 +34,7 @@ CREATE TABLE game_instances (
 CREATE TABLE game_modes (
     id SERIAL PRIMARY KEY,
     name TEXT
-)
+);
 
 INSERT INTO game_modes (name) VALUES ('five_card_poker');
 INSERT INTO game_modes (name) VALUES ('blackjack');

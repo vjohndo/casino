@@ -18,6 +18,7 @@
                 <li><a href="/logout">Logout</a></li>
                 {% else %}
                 <li><a href="/login">Login</a></li>
+                <li>|</li>
                 <li><a href="/signup">Signup</a></li>
                 {% endif %}
             </ul>
@@ -25,9 +26,9 @@
         <div id='playerBar'>
         {% if name %}
             <p> 👤 {{name}} </p>
-            <p> Wallet:  Δ {{wallet}} </p>
+            <p> Wallet:  $ {{wallet}} </p>
         {% else %}
-            <p> Login and collect your dialy bonus!</p>
+            <p> Login to collect your daily $100</p>
         {% endif %}
         </div>
     </header>

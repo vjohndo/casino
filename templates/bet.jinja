@@ -1,7 +1,7 @@
 {% extends "base.jinja" %}
 {% block content %}
 
-    <h2> Five Card Poker #{{game_instance}}</h2>
+    <h2>Five Card Draw #{{game_instance}}</h2>
 
     <div id='display_poker'>
     {% for i in enumerated_hand %} 
@@ -12,21 +12,35 @@
     <form action="/play_game" method="POST">
         <div class="betControls">
             Bet Amount
-            <input class='betInput' type='number' name='bet_value' value='{{ session['bet_amount'] }} min='1' placeholder='Δ'>
+            <input class='betInput' type='number' name='bet_value' value='{{ session['bet_amount'] }} min='1' placeholder='$'>
             <input class='betButton' type='submit' name='bet_buttom' value='Place Bet'>
         </div>
+        <p>Check your wallet. Gamble responsibly.</p>
     </form>
 
-    <table>
-    <tr>
-        <th>Hand</th>
-        <th>Prize</th>
-    </tr>
-    {% for string,payout in prize_items %}
-    <tr>
-        <td>{{string}}</td>
-        <td>{{payout}}</td>
-    </tr>
-    {% endfor %}
-    </table>
+    <div id='fiveCardInstructions'>
+        <ul class='instructionUl'>
+            <li class='instructionLi'>INSTRUCTIONS:</li>
+            <li class='instructionLi'>Player will be given 5 cards.</li>
+            <li class='instructionLi'>Player will have an opportunity to exchange cards.</li>
+            <li class='instructionLi'>Player will be paid out if it is a winning combination.</li>
+            <li class='instructionLi bold'>Player must get a pair of jacks of better for payout. See table across.</li>
+        </ul>
+        <div>
+            <div>PAYOUT:</div>
+            <table id='noMarginTable'>
+                <tr>
+                    <th>Combination</th>
+                    <th>Prize</th>
+                </tr>
+                {% for string,payout in prize_items %}
+                <tr>
+                    <td>{{string}}</td>
+                    <td>{{payout}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
 {% endblock content %}
