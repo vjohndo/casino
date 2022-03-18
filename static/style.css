@@ -41,6 +41,11 @@ h1 {
     font-family: 'Pacifico', cursive;
 }
 
+h4 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 table {    
     margin: 20px auto 20px auto;
     border: solid;
@@ -146,6 +151,10 @@ header {
 .bold {
     font-weight: 700;
     color: yellow;
+}
+
+.smaller {
+    font-size: small;
 }
 
 input[type="checkbox"] {

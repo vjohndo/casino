@@ -1,7 +1,8 @@
 {% extends "base.jinja" %}
 {% block content %}
     <form class='users' action="/signup_action" method="POST">
-        <label>Email:</label><br> <input type="text" name="email">{% if already_exists %}ALREADY EXISTS{% endif %}<br><br> 
+        <label>Email:</label><br> <input type="text" name="email">{% if already_exists %}ALREADY EXISTS{% endif %}<br>
+        <label class="smaller">Feel free to use a made up email for testing</label><br><br> 
         <label>Name:</label><br> <input type="text" name="name"><br><br>
         <label>Password:</label><br> <input type="password" name="password1">{% if passwords_not_match %}NOT MATCH{% endif %}<br><br>
         <label>Password:</label><br> <input type="password" name="password2">{% if passwords_not_match %}NOT MATCH{% endif %}<br><br><br>

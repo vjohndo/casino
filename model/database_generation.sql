@@ -1,5 +1,8 @@
 -- Users Table Generation Code
+DROP TABLE game_instances;
+DROP TABLE game_modes;
 DROP TABLE users;
+
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -14,9 +17,16 @@ CREATE TABLE users (
 -- Password is password_hash
 INSERT INTO users (name, email, password_hash, wallet, is_admin) VALUES ('john', 'john@email.com', '$2b$12$7EtmDXgelc5YzS4xQc8mH.QrOhKxK.BXwCZQxCFAu.wiJbpQ6mGy6', 1000, TRUE);
 
--- Game Instances Table Generation Code
-DROP TABLE game_instances;
+-- Game mode code
+CREATE TABLE game_modes (
+    id SERIAL PRIMARY KEY,
+    name TEXT
+);
 
+INSERT INTO game_modes (name) VALUES ('five_card_poker');
+INSERT INTO game_modes (name) VALUES ('blackjack');
+
+-- Game Instance Generation Code
 CREATE TABLE game_instances (
     id SERIAL PRIMARY KEY,
     user_id INTEGER,
@@ -28,16 +38,6 @@ CREATE TABLE game_instances (
     CONSTRAINT fk_player FOREIGN KEY(user_id) REFERENCES users(id),
     CONSTRAINT fk_game_mode FOREIGN KEY(game_mode_id) REFERENCES game_modes(id)
 );
-
-
--- Game Instance Generation Code
-CREATE TABLE game_modes (
-    id SERIAL PRIMARY KEY,
-    name TEXT
-);
-
-INSERT INTO game_modes (name) VALUES ('five_card_poker');
-INSERT INTO game_modes (name) VALUES ('blackjack');
 
 
 -- Tables for future expansion
