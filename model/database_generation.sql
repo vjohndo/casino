@@ -1,9 +1,9 @@
--- Users Table Generation Code
+-- Drop tables
 DROP TABLE game_instances;
 DROP TABLE game_modes;
 DROP TABLE users;
 
-
+-- Users Table Generation Code
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name TEXT,
