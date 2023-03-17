@@ -1,14 +1,14 @@
 # Casino
 A gaming platform that gives users daily credits to bet on classic casino-style card games. Current games feature Blackjack and 80’s Style Video Poker. Users can sign in to collect a daily currency bonus for use in betting. Game instances are preserved between sessions and unique to each user. Multiple users can make server requests with game logic handled on the side - user's can inspect the browser to overcome the games!
 
-> Login or signup
+> Login / signup
 
 ![Login](./.readme-imgs/login.png)
 ![Signup](./.readme-imgs/signup.png)
 
 > Collect your daily bonus cash and choose a game
 
-![Game choice](./.eadme-imgs/game_choice.png)
+![Game choice](./.readme-imgs/game_choice.png)
 
 > Blackjack
 
