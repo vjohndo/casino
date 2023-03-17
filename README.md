@@ -1,12 +1,47 @@
 # Casino
-This markdown outlines the technologies, approach taken, user instruction and unsolved problems of this tic-tac-toe simulator.
+A gaming platform that gives users daily credits to bet on classic casino-style card games. Current games feature Blackjack and 80’s Style Video Poker. Users can sign in to collect a daily currency bonus for use in betting. Game instances are preserved and unique to each user. Multiple users can make server requests with game logic handled on the side - user's can inspect the browser to overcome the games!
 
-# To-do's
-- Put commands in for the instructions below
-- Udpate the postgreSQL db 
-- Combine the player and user models into a single module and with the class, call the methods
-- regarding the game states, any change in the database should involve a post, don't allow get methyod
+> Login or signup
 
+![Login](./readme-imgs/login.png)
+![Signup](./readme-imgs/signup.png)
+
+> Collect your daily bonus cash and choose a game
+
+![Game choice](./readme-imgs/game_choice.png)
+
+> Blackjack
+
+![Blackjack play](./readme-imgs/blackjack_play.png)
+
+> Five card draw
+
+![Fivecard draw](./readme-imgs/fivecarddraw_play.png)
+
+## Developing locally
+---
+- Clone the repo 
+- Create and activate python virtual environment
+    > `$ python -m venv venv`\
+    > `$ souce venv/bin/activate`
+- Install requirements and technology
+    > `$ pip install -r requirements.txt`
+- Create a postgreSQL database called casino
+    > `$ createdb casino`
+- Use the *database_generation.sql* file to create the required tables in the model directory
+- Run app.py
+    > `$ python app.py`
+
+## Future updates
+---
+- CSS refresh
+- Implement an about page with instructions
+- Implement a profile page, leaderboards and a shop to spend currency
+- Add in a 'loading' symbol to smooth transitions
+- Develop games into single page applications with async functionality
+- Currently games are pickled into the database, to rewrite class construction based on saved JSON files
+- Combine the player and user models into a single module and with the class
+- Improve routing to game, fix the get / post requests
 
 ## Techonologies used
 ---
@@ -20,8 +55,6 @@ This markdown outlines the technologies, approach taken, user instruction and un
 - Flask framework to control routes and sessions
 - Jinja to handle templating of webpages
 
-### Heroku
-- Website is deployed on Heroku
 
 ### HTML
 - Heavy use of forms for POSTS
@@ -40,42 +73,9 @@ This markdown outlines the technologies, approach taken, user instruction and un
 - Purely used to handle card image requests
 - https://deckofcardsapi.com/
 
-## Features
----
-- Users and signup, login, logout
-- Users can collect a daily currency bonus
-- Users can play unique instances of blackjack and five-card poker
-- Game instances are preserved and unique for each user, multiple people can make server requests
-- Game logic is handled server side, users can not inspect the game and breach security
-
-## Unsolved Problems
----
-- CSS needs a refresh
-- To implement an about page with instructions
-- To implement a profile page, leaderboards and a shop to spend currency
-- Add in a 'loading' symbol to smooth transitions
-- Develop games into single page applications with async functionality
-- Currently games are pickled into the database, to rewrite class construction based on saved JSON files
-
-## Instructions for UI
----
-- Login and signup are standards
-- Collect your daily bonus cash
-- Click on a game type
-- Place your bets 
-- Play the game
-
-
-## Instructions for developing
----
-- Clone the repo
-- Create and activate python virtual environment
-- Install requirements and technology 
-- Create a database called casino
-- Use the database_generation.sql file to create the required tables
-- Run app.py
+### Heroku
+- Website was previously deployed on Heroku
 
 ## References
 ---
-- https://deckofcardsapi.com/
 - https://en.wikipedia.org/wiki/Video_poker
