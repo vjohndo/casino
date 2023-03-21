@@ -28,7 +28,7 @@ A gaming platform that gives users daily credits to bet on classic casino-style 
     > `$ pip install -r requirements.txt`
 - Create a postgreSQL database called casino
     > `$ createdb casino`
-- Use the *database_generation.sql* file to create the required tables in the model directory
+- Use the __*database_generation.sql*__ (in the model directory) file to create the required tables 
 - Run app.py
     > `$ python app.py`
 
@@ -39,22 +39,21 @@ A gaming platform that gives users daily credits to bet on classic casino-style 
 - Implement a profile page, leaderboards and a shop to spend currency
 - Add in a 'loading' symbol to smooth transitions
 - Develop games into single page applications with async functionality
-- Currently games are pickled into the database, to rewrite class construction based on saved JSON files
+- Currently games are pickled into the database, need to write a class construction method based on saved JSON files
 - Combine the player and user models into a single module and with the class
-- Improve routing to game, fix the get / post requests
+- Improve routing to game, especially fixing the GET / POST requests
 
 ## Techonologies used
 ---
 ### Python
 - Used to build all models of games
-- Pyscopg2 to hand database 
+- Pyscopg2 to handle database 
 - Bcrypt to handle password hashing
 - Pickling to handle game instance storage and access on database
 
 ### Flask
 - Flask framework to control routes and sessions
 - Jinja to handle templating of webpages
-
 
 ### HTML
 - Heavy use of forms for POSTS
@@ -67,7 +66,10 @@ A gaming platform that gives users daily credits to bet on classic casino-style 
 - Minor use of JS to add event listeners to toggle classes and allow for routing via buttons
 
 ### PSQL
-- At this stage 3 tables. Users, game_instances, game_types. 
+- At this stage 3 tables:
+    - users
+    - game_instances
+    - game_types
 
 ### Deck of cards API
 - Purely used to handle card image requests
